@@ -80,13 +80,19 @@ namespace Anemonis.AspNetCore.RequestDecompression
         /// <param name="context">The <see cref="HttpContext" /> instance for the current request.</param>
         /// <param name="next">The delegate representing the remaining middleware in the request pipeline.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="context" /> is <see langword="null" />.</exception>
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
             if (!context.Request.Headers.TryGetValue(HeaderNames.ContentEncoding, out var encodingNames) && (encodingNames.Count > 0))
             {
                 _logger.LogRequestContentIsNotEncoded();
 
-                await next.Invoke(context);
+                await next?.Invoke(context);
 
                 return;
             }
@@ -97,7 +103,7 @@ namespace Anemonis.AspNetCore.RequestDecompression
             {
                 _logger.LogRequestDecodingDisabled();
 
-                await next.Invoke(context);
+                await next?.Invoke(context);
 
                 return;
             }
@@ -165,7 +171,7 @@ namespace Anemonis.AspNetCore.RequestDecompression
 
             try
             {
-                await next.Invoke(context);
+                await next?.Invoke(context);
             }
             finally
             {
