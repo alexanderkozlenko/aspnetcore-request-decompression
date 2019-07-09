@@ -102,7 +102,7 @@ namespace Anemonis.AspNetCore.RequestDecompression.UnitTests
             httpContext.Request.Method = HttpMethods.Post;
             httpContext.Request.Headers.Add(HeaderNames.ContentEncoding, "encoding");
             httpContext.Request.Headers.Add(HeaderNames.ContentRange, "0-*/*");
-            httpContext.Request.Body = new MemoryStream(contentBytes);
+            httpContext.Request.Body = new TestRequestStream(contentBytes);
 
             await middleware.InvokeAsync(httpContext, c => Task.CompletedTask);
 
@@ -166,7 +166,7 @@ namespace Anemonis.AspNetCore.RequestDecompression.UnitTests
 
             httpContext.Request.Method = HttpMethods.Post;
             httpContext.Request.Headers.Add(HeaderNames.ContentEncoding, encoding1Values);
-            httpContext.Request.Body = new MemoryStream(contentBytes1);
+            httpContext.Request.Body = new TestRequestStream(contentBytes1);
 
             await middleware.InvokeAsync(httpContext, c => Task.CompletedTask);
 
@@ -176,7 +176,15 @@ namespace Anemonis.AspNetCore.RequestDecompression.UnitTests
 
                 if (encoding2 == "")
                 {
-                    contentBytes2 = ((MemoryStream)httpContext.Request.Body).ToArray();
+                    if (httpContext.Request.Body is TestRequestStream)
+                    {
+                        contentBytes2 = ((TestRequestStream)httpContext.Request.Body).ToArray();
+                    }
+                    else
+                    {
+                        contentBytes2 = ((MemoryStream)httpContext.Request.Body).ToArray();
+                    }
+
 
                     Assert.AreEqual(content, Encoding.UTF8.GetString(contentBytes2));
                 }

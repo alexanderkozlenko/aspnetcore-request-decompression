@@ -148,25 +148,32 @@ namespace Anemonis.AspNetCore.RequestDecompression
                 context.Request.Body = decodedStream;
             }
 
-            if (encodingsLeft == 0)
+            if (encodingsLeft != encodingNames.Count)
             {
-                context.Request.ContentLength = context.Request.Body.Length;
-                context.Request.Headers.Remove(HeaderNames.ContentEncoding);
-            }
-            else if (encodingsLeft == 1)
-            {
-                context.Request.Headers[HeaderNames.ContentEncoding] = new StringValues(encodingNames[0]);
-            }
-            else
-            {
-                var encodingNamesLeft = new string[encodingsLeft];
-
-                for (var i = 0; i < encodingNamesLeft.Length; i++)
+                if (encodingsLeft == 0)
                 {
-                    encodingNamesLeft[i] = encodingNames[i];
-                }
+                    if (context.Request.Body.CanSeek)
+                    {
+                        context.Request.ContentLength = context.Request.Body.Length;
+                    }
 
-                context.Request.Headers[HeaderNames.ContentEncoding] = new StringValues(encodingNamesLeft);
+                    context.Request.Headers.Remove(HeaderNames.ContentEncoding);
+                }
+                else if (encodingsLeft == 1)
+                {
+                    context.Request.Headers[HeaderNames.ContentEncoding] = new StringValues(encodingNames[0]);
+                }
+                else
+                {
+                    var encodingNamesLeft = new string[encodingsLeft];
+
+                    for (var i = 0; i < encodingNamesLeft.Length; i++)
+                    {
+                        encodingNamesLeft[i] = encodingNames[i];
+                    }
+
+                    context.Request.Headers[HeaderNames.ContentEncoding] = new StringValues(encodingNamesLeft);
+                }
             }
 
             try
