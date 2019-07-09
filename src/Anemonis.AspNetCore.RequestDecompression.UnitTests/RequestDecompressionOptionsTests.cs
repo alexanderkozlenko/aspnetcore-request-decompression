@@ -14,7 +14,7 @@ namespace Anemonis.AspNetCore.RequestDecompression.UnitTests
         {
             var options = new RequestDecompressionOptions();
 
-            Assert.IsFalse(options.SkipUnsupportedEncodings);
+            Assert.IsTrue(options.SkipUnsupportedEncodings);
             Assert.IsNotNull(options.Providers);
             Assert.AreEqual(0, options.Providers.Count);
         }

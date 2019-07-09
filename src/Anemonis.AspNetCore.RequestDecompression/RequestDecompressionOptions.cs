@@ -10,6 +10,7 @@ namespace Anemonis.AspNetCore.RequestDecompression
         /// <summary>Initializes a new instance of the <see cref="RequestDecompressionOptions" /> class.</summary>
         public RequestDecompressionOptions()
         {
+            SkipUnsupportedEncodings = true;
         }
 
         /// <summary>Gets a collection of registered decompression provider types.</summary>
