@@ -23,11 +23,25 @@ namespace Anemonis.AspNetCore.RequestDecompression
     /// <summary>Represents a middleware for adding HTTP request decompression to the application's request pipeline.</summary>
     public sealed class RequestDecompressionMiddleware : IMiddleware, IDisposable
     {
-        private static readonly IDecompressionProvider _identityDecompressionProvider = new IdentityDecompressionProvider();
-
-        private readonly Dictionary<string, IDecompressionProvider> _providers;
+        private static readonly Dictionary<string, IDecompressionProvider> _defaultProviders = new Dictionary<string, IDecompressionProvider>(StringComparer.OrdinalIgnoreCase);
+         
+        private readonly Dictionary<string, IDecompressionProvider> _providers = new Dictionary<string, IDecompressionProvider>(_defaultProviders, StringComparer.OrdinalIgnoreCase);
         private readonly bool _skipUnsupportedEncodings;
         private readonly ILogger _logger;
+
+        static RequestDecompressionMiddleware()
+        {
+            foreach (var type in Assembly.GetExecutingAssembly().DefinedTypes)
+            {
+                if (typeof(IDecompressionProvider).IsAssignableFrom(type) && type.IsNotPublic)
+                {
+                    var decompressionProvider = (IDecompressionProvider)Activator.CreateInstance(type);
+                    var encodingName = type.GetCustomAttribute<EncodingNameAttribute>().EncodingName;
+
+                    _defaultProviders[encodingName] = decompressionProvider;
+                }
+            }
+        }
 
         /// <summary>Initializes a new instance of the <see cref="RequestDecompressionMiddleware" /> class.</summary>
         /// <param name="services">The <see cref="IServiceProvider" /> instance for retrieving service objects.</param>
@@ -54,25 +68,19 @@ namespace Anemonis.AspNetCore.RequestDecompression
 
             var decompressionOptions = options.Value;
 
-            var decompressionProviders = new Dictionary<string, IDecompressionProvider>(decompressionOptions.Providers.Count, StringComparer.OrdinalIgnoreCase)
-            {
-                { "identity", _identityDecompressionProvider }
-            };
-
             foreach (var decompressionProviderType in decompressionOptions.Providers)
             {
                 var decompressionProvider = (IDecompressionProvider)ActivatorUtilities.CreateInstance(services, decompressionProviderType);
                 var encodingName = decompressionProviderType.GetCustomAttribute<EncodingNameAttribute>().EncodingName;
 
-                if (decompressionProviders.ContainsKey(encodingName))
+                if (_providers.ContainsKey(encodingName))
                 {
                     throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, Strings.GetString("middleware.duplicate_encoding_name"), encodingName));
                 }
 
-                decompressionProviders[encodingName] = decompressionProvider;
+                _providers[encodingName] = decompressionProvider;
             }
 
-            _providers = decompressionProviders;
             _skipUnsupportedEncodings = decompressionOptions.SkipUnsupportedEncodings;
         }
 
