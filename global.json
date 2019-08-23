@@ -3,6 +3,6 @@
     "version": "2.2.401"
   },
   "msbuild-sdks": {
-    "Microsoft.Build.Traversal": "2.0.12"
+    "Microsoft.Build.Traversal": "2.0.19"
   }
 }
