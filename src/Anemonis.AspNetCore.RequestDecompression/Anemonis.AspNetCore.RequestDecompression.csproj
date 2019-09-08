@@ -1,10 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="$(SolutionDirectory)\$(MSBuildProjectName).props" />
   <PropertyGroup>
+    <ProjectGuid>{38EB58FE-E2F9-48A1-904C-9DA811375067}</ProjectGuid>
     <IsPackable>true</IsPackable>
-    <TargetFrameworks>netstandard2.0;netcoreapp2.1</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.1;netstandard2.0</TargetFrameworks>
     <SignAssembly>true</SignAssembly>
     <GenerateDependencyFile>false</GenerateDependencyFile>
+    <SonarQubeExclude>false</SonarQubeExclude>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <GenerateDocumentationFile>true</GenerateDocumentationFile>

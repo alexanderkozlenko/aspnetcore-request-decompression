@@ -17,5 +17,6 @@
     <AssemblyOriginatorKeyFile>$(SolutionDirectory)\Open.snk</AssemblyOriginatorKeyFile>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <SonarQubeExclude>true</SonarQubeExclude>
   </PropertyGroup>
 </Project>

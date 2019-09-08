@@ -41,6 +41,17 @@ stages:
       inputs:
         useGlobalJson: true
         workingDirectory: '$(Build.SourcesDirectory)'
+    - task: SonarCloudPrepare@1
+      displayName: 'sonar.prepare'
+      inputs:
+        SonarCloud: '$(System.ServiceConnection.Sonar)'
+        organization: '$(Sonar.Organization)'
+        projectKey: '$(Sonar.ProjectKey)'
+        scannerMode: 'MSBuild'
+        extraProperties: |
+          sonar.language=cs
+          sonar.cs.roslyn.ignoreIssues=true
+          sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)/*.trx
     - task: DotNetCoreCLI@2
       displayName: 'dotnet.build'
       inputs:
@@ -53,12 +64,17 @@ stages:
         command: custom
         custom: test
         arguments: '$(Build.ProjectPath) -c $(Build.Configuration) -p:ContinuousIntegrationBuild=true -p:BuildNumber=$(Build.BuildNumber) --no-build -l trx -r $(Agent.TempDirectory)'
+    - task: SonarCloudAnalyze@1
+      displayName: 'sonar.analyze'
     - task: PublishTestResults@2
       displayName: 'pipeline.reports.publish'
       inputs:
         testRunner: VSTest
         testResultsFiles: '**/*.trx'
         searchFolder: '$(Agent.TempDirectory)'
+    - task: SonarCloudPublish@1
+      displayName: 'sonar.publish'
+      condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
 - stage: Publish
   condition: and(succeeded(), or(ne(variables['Build.AllowPublish'], ''), eq(variables['Build.SourceBranch'], 'refs/heads/master')))
   jobs:
