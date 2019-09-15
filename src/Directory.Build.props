@@ -2,9 +2,6 @@
 <Project>
   <PropertyGroup>
     <IsPackable>false</IsPackable>
-    <IsTestable>false</IsTestable>
-  </PropertyGroup>
-  <PropertyGroup>
     <RepositoryDirectory>$([MSBuild]::NormalizeDirectory($(MSBuildThisFileDirectory)..))</RepositoryDirectory>
     <SolutionDirectory>$(MSBuildThisFileDirectory)</SolutionDirectory>
     <BaseIntermediateOutputPath>$(RepositoryDirectory)obj\$(MSBuildProjectName)</BaseIntermediateOutputPath>

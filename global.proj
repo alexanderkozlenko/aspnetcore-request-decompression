@@ -8,10 +8,21 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="$(MSBuildThisFileDirectory)**\*.??proj" />
+    <SolutionReference Include="$(MSBuildThisFileDirectory)**\*.sln" />
   </ItemGroup>
   <Import Sdk="Microsoft.Build.Traversal"
           Project="Sdk.targets"/>
-  <Target Name="VSTest">
-    <CallTarget Targets="Test" />
+  <Target Name="Build"
+          DependsOnTargets="$(BuildDependsOn)">
+    <MSBuild Projects="@(ProjectReference)"
+             BuildInParallel="$(BuildInParallel)"
+             SkipNonexistentProjects="$(SkipNonexistentProjects)"
+             SkipNonexistentTargets="$(SkipNonexistentTargets)"
+             Condition="'$(UseSolution)' == ''" />
+    <MSBuild Projects="@(SolutionReference)"
+             BuildInParallel="$(BuildInParallel)"
+             SkipNonexistentProjects="$(SkipNonexistentProjects)"
+             SkipNonexistentTargets="$(SkipNonexistentTargets)"
+             Condition="'$(UseSolution)' != ''" />
   </Target>
 </Project>

@@ -12,14 +12,9 @@
     </PropertyGroup>
   </Target>
   <Target Name="InitializeTestProperties"
-          BeforeTargets="Test"
-          Condition="'$(IsTestable)' == 'true'">
+          BeforeTargets="VSTest">
     <PropertyGroup>
-      <VSTestResultsDirectory Condition="'$(VSTestResultsDirectory)' == ''">$(BaseOutputPath)\$(Configuration)</VSTestResultsDirectory>
+      <VSTestResultsDirectory Condition="'$(VSTestResultsDirectory)' == ''">$(BaseOutputPath)$(Configuration)</VSTestResultsDirectory>
     </PropertyGroup>
-  </Target>
-  <Target Name="Test"
-          Condition="'$(IsTestable)' == 'true'">
-    <CallTarget Targets="VSTest" />
   </Target>
 </Project>

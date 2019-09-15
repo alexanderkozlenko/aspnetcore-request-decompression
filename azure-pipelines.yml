@@ -3,12 +3,10 @@
 variables:
 - name: 'Build.ProjectPath'
   value: '$(Build.SourcesDirectory)/global.proj'
-- name: 'Build.Configuration'
-  value: 'Release'
 stages:
 - stage: Build
   jobs:
-  - job: Default
+  - job: Release
     steps:
     - task: UseDotNet@2
       displayName: 'dotnet.use'
@@ -20,21 +18,22 @@ stages:
       inputs:
         command: custom
         custom: build
-        arguments: '$(Build.ProjectPath) -c $(Build.Configuration) -p:ContinuousIntegrationBuild=true -p:BuildNumber=$(Build.BuildNumber)'
+        arguments: '$(Build.ProjectPath) -v $(DOTNET_VERBOSITY) -c Release -p:ContinuousIntegrationBuild=true -p:BuildNumber=$(Build.BuildNumber) -p:UseSolution=true'
     - task: DotNetCoreCLI@2
       displayName: 'dotnet.pack'
       inputs:
         command: custom
         custom: pack
-        arguments: '$(Build.ProjectPath) -c $(Build.Configuration) -p:ContinuousIntegrationBuild=true -p:BuildNumber=$(Build.BuildNumber) --no-build --include-symbols -o $(Build.ArtifactStagingDirectory)'
+        arguments: '$(Build.ProjectPath) -v $(DOTNET_VERBOSITY) -c Release -p:ContinuousIntegrationBuild=true -p:BuildNumber=$(Build.BuildNumber) --no-build --include-symbols -o $(Build.ArtifactStagingDirectory)'
     - task: PublishPipelineArtifact@0
-      displayName: 'pipeline.artifacts.publish'
+      displayName: 'artifact.publish'
       inputs:
         artifactName: 'artifact'
         targetPath: '$(Build.ArtifactStagingDirectory)'
 - stage: Test
+  condition: and(succeeded(), eq(variables['Build.SkipTest'], ''))
   jobs:
-  - job: Default
+  - job: Release
     steps:
     - task: UseDotNet@2
       displayName: 'dotnet.use'
@@ -49,7 +48,7 @@ stages:
         projectKey: '$(Sonar.ProjectKey)'
         scannerMode: 'MSBuild'
         extraProperties: |
-          sonar.language=cs
+          sonar.log.level=$(Sonar.Logging.Level)
           sonar.cs.roslyn.ignoreIssues=true
           sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)/*.trx
     - task: DotNetCoreCLI@2
@@ -57,32 +56,33 @@ stages:
       inputs:
         command: custom
         custom: build
-        arguments: '$(Build.ProjectPath) -c $(Build.Configuration) -p:ContinuousIntegrationBuild=true -p:BuildNumber=$(Build.BuildNumber)'
+        arguments: '$(Build.ProjectPath) -v $(DOTNET_VERBOSITY) -c Release -p:ContinuousIntegrationBuild=true -p:BuildNumber=$(Build.BuildNumber) -p:UseSolution=true'
     - task: DotNetCoreCLI@2
       displayName: 'dotnet.test'
       inputs:
         command: custom
         custom: test
-        arguments: '$(Build.ProjectPath) -c $(Build.Configuration) -p:ContinuousIntegrationBuild=true -p:BuildNumber=$(Build.BuildNumber) --no-build -l trx -r $(Agent.TempDirectory)'
+        arguments: '$(Build.ProjectPath) -v $(DOTNET_VERBOSITY) -c Release -p:ContinuousIntegrationBuild=true -p:BuildNumber=$(Build.BuildNumber) --no-build -l trx -r $(Agent.TempDirectory)'
     - task: SonarCloudAnalyze@1
       displayName: 'sonar.analyze'
     - task: PublishTestResults@2
-      displayName: 'pipeline.reports.publish'
+      displayName: 'report.publish'
       inputs:
         testRunner: VSTest
         testResultsFiles: '**/*.trx'
         searchFolder: '$(Agent.TempDirectory)'
+      condition: always()
     - task: SonarCloudPublish@1
       displayName: 'sonar.publish'
       condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
 - stage: Publish
-  condition: and(succeeded(), or(ne(variables['Build.AllowPublish'], ''), eq(variables['Build.SourceBranch'], 'refs/heads/master')))
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(variables['Build.SkipPublish'], ''))
   jobs:
-  - job: Default
+  - job: Release
     steps:
     - checkout: none
     - task: DownloadPipelineArtifact@1
-      displayName: 'pipeline.artifacts.download'
+      displayName: 'artifact.download'
       inputs:
         targetPath: '$(Build.ArtifactStagingDirectory)'
     - task: NuGetToolInstaller@1
@@ -90,7 +90,7 @@ stages:
       inputs:
         versionSpec: '$(System.NuGet.Version)'
     - task: NuGetCommand@2
-      displayName: 'nuget.artifacts.publish'
+      displayName: 'nuget.push'
       inputs:
         command: push
         packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg'
