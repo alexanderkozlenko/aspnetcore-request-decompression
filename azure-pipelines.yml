@@ -28,7 +28,7 @@ stages:
     - task: PublishPipelineArtifact@0
       displayName: 'artifact.publish'
       inputs:
-        artifactName: 'artifact'
+        artifactName: 'packages'
         targetPath: '$(Build.ArtifactStagingDirectory)'
 - stage: Test
   condition: and(succeeded(), eq(variables['Build.SkipTest'], ''))
@@ -49,20 +49,22 @@ stages:
         scannerMode: 'MSBuild'
         extraProperties: |
           sonar.log.level=$(Sonar.Logging.Level)
+          sonar.scm.disabled=true
           sonar.cs.roslyn.ignoreIssues=true
-          sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)/*.trx
+          sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)/reports/**/*.trx
+          sonar.cs.opencover.reportsPaths=$(Agent.TempDirectory)/reports/**/*.opencover.xml
     - task: DotNetCoreCLI@2
       displayName: 'dotnet.build'
       inputs:
         command: custom
         custom: build
-        arguments: '$(Build.ProjectPath) -v $(DOTNET_VERBOSITY) -c Release -p:ContinuousIntegrationBuild=true -p:BuildNumber=$(Build.BuildNumber) -p:UseSolution=true'
+        arguments: '$(Build.ProjectPath) -v $(DOTNET_VERBOSITY) -c Release -p:BuildNumber=$(Build.BuildNumber) -p:UseSolution=true -p:CopyLocalLockFileAssemblies=true'
     - task: DotNetCoreCLI@2
       displayName: 'dotnet.test'
       inputs:
         command: custom
         custom: test
-        arguments: '$(Build.ProjectPath) -v $(DOTNET_VERBOSITY) -c Release -p:ContinuousIntegrationBuild=true -p:BuildNumber=$(Build.BuildNumber) --no-build -l trx -r $(Agent.TempDirectory)'
+        arguments: '$(Build.ProjectPath) -v $(DOTNET_VERBOSITY) -c Release -p:BuildNumber=$(Build.BuildNumber) --no-build -s $(Build.SourcesDirectory)/src/DataCollection.runsettings -l trx -r $(Agent.TempDirectory)/reports'
     - task: SonarCloudAnalyze@1
       displayName: 'sonar.analyze'
     - task: PublishTestResults@2
@@ -84,6 +86,7 @@ stages:
     - task: DownloadPipelineArtifact@1
       displayName: 'artifact.download'
       inputs:
+        artifactName: 'packages'
         targetPath: '$(Build.ArtifactStagingDirectory)'
     - task: NuGetToolInstaller@1
       displayName: 'nuget.use'
