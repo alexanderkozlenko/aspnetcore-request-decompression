@@ -64,7 +64,7 @@ stages:
       inputs:
         command: custom
         custom: test
-        arguments: '$(Build.ProjectPath) -v $(DOTNET_VERBOSITY) -c Release -p:BuildNumber=$(Build.BuildNumber) --no-build -s $(Build.SourcesDirectory)/src/DataCollection.runsettings -l trx -r $(Agent.TempDirectory)/reports'
+        arguments: '$(Build.ProjectPath) -v $(DOTNET_VERBOSITY) -c Release -p:BuildNumber=$(Build.BuildNumber) --no-build -s $(Build.SourcesDirectory)/src/.runsettings -l trx -r $(Agent.TempDirectory)/reports'
     - task: SonarCloudAnalyze@1
       displayName: 'sonar.analyze'
     - task: PublishTestResults@2
