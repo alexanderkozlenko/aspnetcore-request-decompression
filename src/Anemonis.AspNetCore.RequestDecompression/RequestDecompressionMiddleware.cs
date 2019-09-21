@@ -23,6 +23,8 @@ namespace Anemonis.AspNetCore.RequestDecompression
     /// <summary>Represents a middleware for adding HTTP request decompression to the application's request pipeline.</summary>
     public sealed class RequestDecompressionMiddleware : IMiddleware, IDisposable
     {
+        private const int _defaultCopyBufferSize = 81920;
+
         private static readonly Dictionary<string, IDecompressionProvider> _defaultProviders = new Dictionary<string, IDecompressionProvider>(StringComparer.OrdinalIgnoreCase);
          
         private readonly Dictionary<string, IDecompressionProvider> _providers = new Dictionary<string, IDecompressionProvider>(_defaultProviders, StringComparer.OrdinalIgnoreCase);
@@ -149,7 +151,7 @@ namespace Anemonis.AspNetCore.RequestDecompression
 
                 using (decodingStream)
                 {
-                    await decodingStream.CopyToAsync(decodedStream, 81920, context.RequestAborted);
+                    await decodingStream.CopyToAsync(decodedStream, _defaultCopyBufferSize, context.RequestAborted);
                 }
 
                 decodedStream.Position = 0L;
