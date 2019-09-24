@@ -1,7 +1,5 @@
 ﻿// © Alexander Kozlenko. Licensed under the MIT License.
 
-#if NETCOREAPP2_1
-
 using System.IO;
 using System.IO.Compression;
 
@@ -22,5 +20,3 @@ namespace Anemonis.AspNetCore.RequestDecompression
         }
     }
 }
-
-#endif

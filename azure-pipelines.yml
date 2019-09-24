@@ -42,6 +42,11 @@ stages:
       inputs:
         useGlobalJson: true
         workingDirectory: '$(Build.SourcesDirectory)'
+    - task: UseDotNet@2
+      displayName: 'dotnet.use.sonar'
+      inputs:
+        packageType: sdk
+        version: 2.x
     - task: SonarCloudPrepare@1
       displayName: 'sonar.prepare'
       inputs:

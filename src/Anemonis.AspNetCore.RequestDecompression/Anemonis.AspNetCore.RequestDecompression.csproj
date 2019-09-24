@@ -2,7 +2,7 @@
   <Import Project="$(SolutionDirectory)\$(MSBuildProjectName).props" />
   <PropertyGroup>
     <IsPackable>true</IsPackable>
-    <TargetFrameworks>netcoreapp2.1;netstandard2.0</TargetFrameworks>
+    <TargetFramework>netstandard2.1</TargetFramework>
     <SignAssembly>true</SignAssembly>
     <GenerateDependencyFile>false</GenerateDependencyFile>
     <SonarQubeExclude>false</SonarQubeExclude>

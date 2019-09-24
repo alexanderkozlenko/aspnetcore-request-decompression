@@ -50,6 +50,9 @@ csharp_style_inlined_variable_declaration = true:suggestion
 csharp_style_pattern_local_over_anonymous_function = true:suggestion
 csharp_style_pattern_matching_over_as_with_null_check = true:suggestion
 csharp_style_pattern_matching_over_is_with_cast_check = true:suggestion
+csharp_style_prefer_index_operator = true:suggestion
+csharp_style_prefer_range_operator = true:suggestion
+csharp_style_prefer_switch_expression = true:suggestion
 csharp_style_throw_expression = false:warning
 csharp_style_unused_value_assignment_preference = discard_variable:suggestion
 csharp_style_unused_value_expression_statement_preference = discard_variable:silent
@@ -58,9 +61,9 @@ csharp_style_var_for_built_in_types = true:warning
 csharp_style_var_when_type_is_apparent = true:warning
 
 csharp_prefer_braces = true:warning
-csharp_prefer_simple_default_expression = true:suggestion
+csharp_prefer_simple_default_expression = true:silent
+csharp_prefer_simple_using_statement = true:silent
 csharp_preferred_modifier_order = public,private,protected,internal,static,extern,new,virtual,abstract,sealed,override,readonly,unsafe,volatile,async:warning
-csharp_using_directive_placement = outside_namespace
 
 dotnet_sort_system_directives_first = true
 dotnet_separate_import_directive_groups = true
@@ -88,6 +91,7 @@ csharp_space_between_method_call_parameter_list_parentheses = false
 csharp_space_between_method_declaration_empty_parameter_list_parentheses = false
 csharp_space_between_method_declaration_parameter_list_parentheses = false
 csharp_space_between_parentheses = false
+csharp_using_directive_placement = outside_namespace
 
 dotnet_naming_style.interface_style.capitalization = pascal_case
 dotnet_naming_style.interface_style.required_prefix = I

@@ -206,5 +206,3 @@ namespace Anemonis.AspNetCore.RequestDecompression
         }
     }
 }
-
-#pragma warning restore CA2007

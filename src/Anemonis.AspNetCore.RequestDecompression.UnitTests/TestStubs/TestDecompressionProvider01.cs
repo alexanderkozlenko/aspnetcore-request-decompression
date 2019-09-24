@@ -14,5 +14,3 @@ namespace Anemonis.AspNetCore.RequestDecompression.UnitTests.TestStubs
         }
     }
 }
-
-#pragma warning restore IDE0060
