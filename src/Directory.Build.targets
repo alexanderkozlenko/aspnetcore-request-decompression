@@ -1,4 +1,4 @@
-<!-- © Alexander Kozlenko. Licensed under the MIT License. -->
+﻿<!-- © Alexander Kozlenko. Licensed under the MIT License. -->
 <Project>
   <Target Name="InitializePackageUrls"
           DependsOnTargets="$(SourceLinkUrlInitializerTargets)"
@@ -7,12 +7,6 @@
       <PackageProjectUrl>$(RepositoryUrl.Replace('.git', ''))</PackageProjectUrl>
       <PackageIconUrl>%(SourceRoot.SourceLinkUrl)</PackageIconUrl>
       <PackageIconUrl>$(PackageIconUrl.Replace('*', 'img/$(PackageId).png'))</PackageIconUrl>
-    </PropertyGroup>
-  </Target>
-  <Target Name="InitializeTestProperties"
-          BeforeTargets="VSTest">
-    <PropertyGroup>
-      <VSTestResultsDirectory Condition="'$(VSTestResultsDirectory)' == ''">$(BaseOutputPath)$(Configuration)</VSTestResultsDirectory>
     </PropertyGroup>
   </Target>
 </Project>
