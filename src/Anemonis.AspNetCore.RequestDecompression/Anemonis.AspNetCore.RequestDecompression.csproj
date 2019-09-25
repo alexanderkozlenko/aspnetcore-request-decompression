@@ -5,11 +5,18 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <SignAssembly>true</SignAssembly>
     <GenerateDependencyFile>false</GenerateDependencyFile>
+    <PackageIcon>PackageIcon.png</PackageIcon>
     <SonarQubeExclude>false</SonarQubeExclude>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
+  <ItemGroup>
+    <None Update="Properties\PackageIcon.png">
+      <Pack>true</Pack>
+      <PackagePath>PackageIcon.png</PackagePath>
+    </None>
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.CodeQuality.Analyzers" Version="2.9.4" PrivateAssets="All" />

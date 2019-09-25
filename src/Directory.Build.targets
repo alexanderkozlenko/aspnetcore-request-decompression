@@ -5,8 +5,6 @@
           BeforeTargets="GenerateNuspec">
     <PropertyGroup>
       <PackageProjectUrl>$(RepositoryUrl.Replace('.git', ''))</PackageProjectUrl>
-      <PackageIconUrl>%(SourceRoot.SourceLinkUrl)</PackageIconUrl>
-      <PackageIconUrl>$(PackageIconUrl.Replace('*', 'img/$(PackageId).png'))</PackageIconUrl>
     </PropertyGroup>
   </Target>
 </Project>
