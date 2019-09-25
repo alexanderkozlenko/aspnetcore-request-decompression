@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,7 +23,7 @@ namespace Anemonis.AspNetCore.RequestDecompression.UnitTests
         public void ConstructorWithServicesAndOptionsWhenServicesIsNull()
         {
             var optionsMock = new Mock<IOptions<RequestDecompressionOptions>>(MockBehavior.Strict);
-            var loggerMock = new Mock<ILogger<RequestDecompressionMiddleware>>(MockBehavior.Strict);
+            var loggerMock = new Mock<ILogger<RequestDecompressionMiddleware>>(MockBehavior.Loose);
 
             Assert.ThrowsException<ArgumentNullException>(() =>
                 new RequestDecompressionMiddleware(null, optionsMock.Object, loggerMock.Object));
@@ -34,7 +33,7 @@ namespace Anemonis.AspNetCore.RequestDecompression.UnitTests
         public void ConstructorWithServicesAndOptionsWhenOptionsIsNull()
         {
             var serviceProviderMock = new Mock<IServiceProvider>(MockBehavior.Strict);
-            var loggerMock = new Mock<ILogger<RequestDecompressionMiddleware>>(MockBehavior.Strict);
+            var loggerMock = new Mock<ILogger<RequestDecompressionMiddleware>>(MockBehavior.Loose);
 
             Assert.ThrowsException<ArgumentNullException>(() =>
                 new RequestDecompressionMiddleware(serviceProviderMock.Object, null, loggerMock.Object));
@@ -65,7 +64,7 @@ namespace Anemonis.AspNetCore.RequestDecompression.UnitTests
                 .Setup(o => o.Value)
                 .Returns(options);
 
-            var loggerMock = new Mock<ILogger<RequestDecompressionMiddleware>>(MockBehavior.Strict);
+            var loggerMock = new Mock<ILogger<RequestDecompressionMiddleware>>(MockBehavior.Loose);
 
             Assert.ThrowsException<InvalidOperationException>(() =>
                 new RequestDecompressionMiddleware(serviceProviderMock.Object, optionsMock.Object, loggerMock.Object));
@@ -85,14 +84,11 @@ namespace Anemonis.AspNetCore.RequestDecompression.UnitTests
                 .Setup(o => o.Value)
                 .Returns(options);
 
-            var loggerMock = new Mock<ILogger<RequestDecompressionMiddleware>>(MockBehavior.Strict);
+            var loggerMock = new Mock<ILogger<RequestDecompressionMiddleware>>(MockBehavior.Loose);
 
             loggerMock
                 .Setup(o => o.IsEnabled(It.IsAny<LogLevel>()))
                 .Returns(true);
-            loggerMock
-                .Setup(o => o.Log(It.IsAny<LogLevel>(), It.IsAny<EventId>(), It.IsAny<object>(), It.IsAny<Exception>(), It.IsAny<Func<object, Exception, string>>()))
-                .Callback<LogLevel, EventId, object, Exception, Func<object, Exception, string>>((ll, ei, st, ex, fr) => Trace.WriteLine($"Level: '{ll}', Id: ({ei.Id}, '{ei.Name}'), State: '{st}'"));
 
             var middleware = new RequestDecompressionMiddleware(serviceProviderMock.Object, optionsMock.Object, loggerMock.Object);
             var content = "Hello World!";
@@ -132,14 +128,11 @@ namespace Anemonis.AspNetCore.RequestDecompression.UnitTests
             options.Providers.Add<BrotliDecompressionProvider>();
             options.SkipUnsupportedEncodings = skipUnsupportedEncodings;
 
-            var loggerMock = new Mock<ILogger<RequestDecompressionMiddleware>>(MockBehavior.Strict);
+            var loggerMock = new Mock<ILogger<RequestDecompressionMiddleware>>(MockBehavior.Loose);
 
             loggerMock
                 .Setup(o => o.IsEnabled(It.IsAny<LogLevel>()))
                 .Returns(true);
-            loggerMock
-                .Setup(o => o.Log(It.IsAny<LogLevel>(), It.IsAny<EventId>(), It.IsAny<object>(), It.IsAny<Exception>(), It.IsAny<Func<object, Exception, string>>()))
-                .Callback<LogLevel, EventId, object, Exception, Func<object, Exception, string>>((ll, ei, st, ex, fr) => Trace.WriteLine($"Level: '{ll}', Id: ({ei.Id}, '{ei.Name}'), State: '{st}'"));
 
             var serviceProviderMock = new Mock<IServiceProvider>(MockBehavior.Strict);
             var optionsMock = new Mock<IOptions<RequestDecompressionOptions>>(MockBehavior.Strict);
