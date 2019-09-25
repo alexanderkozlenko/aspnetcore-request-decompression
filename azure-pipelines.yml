@@ -10,7 +10,7 @@ stages:
   - job: Release
     steps:
     - task: UseDotNet@2
-      displayName: 'dotnet.use'
+      displayName: 'dotnet.use.sdk'
       inputs:
         useGlobalJson: true
         workingDirectory: '$(Build.SourcesDirectory)'
@@ -38,15 +38,15 @@ stages:
   - job: Release
     steps:
     - task: UseDotNet@2
-      displayName: 'dotnet.use'
+      displayName: 'dotnet.use.sonar'
+      inputs:
+        packageType: runtime
+        version: 2.x
+    - task: UseDotNet@2
+      displayName: 'dotnet.use.sdk'
       inputs:
         useGlobalJson: true
         workingDirectory: '$(Build.SourcesDirectory)'
-    - task: UseDotNet@2
-      displayName: 'dotnet.use.sonar'
-      inputs:
-        packageType: sdk
-        version: 2.x
     - task: SonarCloudPrepare@1
       displayName: 'sonar.prepare'
       inputs:
