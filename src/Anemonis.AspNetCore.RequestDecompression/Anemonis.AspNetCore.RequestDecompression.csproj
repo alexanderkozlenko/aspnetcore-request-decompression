@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="$(SolutionDirectory)\$(MSBuildProjectName).props" />
   <PropertyGroup>
     <IsPackable>true</IsPackable>
     <TargetFramework>netstandard2.1</TargetFramework>
@@ -26,4 +25,5 @@
     <PackageReference Include="Microsoft.NetCore.Analyzers" Version="2.9.4" PrivateAssets="All" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta2-19367-01" PrivateAssets="All" />
   </ItemGroup>
+  <Import Project="**\*.props" />
 </Project>
