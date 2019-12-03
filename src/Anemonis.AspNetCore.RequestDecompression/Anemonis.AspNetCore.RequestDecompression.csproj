@@ -22,7 +22,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeQuality.Analyzers" Version="2.9.8" PrivateAssets="All" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Options" Version="3.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="3.1.0" />
     <PackageReference Include="Microsoft.NetCore.Analyzers" Version="2.9.8" PrivateAssets="All" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
   </ItemGroup>
