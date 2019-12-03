@@ -1,8 +1,8 @@
 ﻿<!-- © Alexander Kozlenko. Licensed under the MIT License. -->
 <Project>
   <PropertyGroup>
-    <VersionPrefix>1.6.0</VersionPrefix>
-    <VersionSuffix></VersionSuffix>
+    <VersionPrefix>1.7.0</VersionPrefix>
+    <VersionSuffix>beta</VersionSuffix>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Authors><![CDATA[Alexander Kozlenko]]></Authors>
