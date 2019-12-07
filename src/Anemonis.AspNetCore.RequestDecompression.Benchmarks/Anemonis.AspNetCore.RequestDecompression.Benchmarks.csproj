@@ -1,10 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <IsDevelopmentProject>true</IsDevelopmentProject>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <OutputType>Exe</OutputType>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <NoWin32Manifest>true</NoWin32Manifest>
-    <DeterministicSourcePaths>false</DeterministicSourcePaths>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Anemonis.AspNetCore.RequestDecompression\Anemonis.AspNetCore.RequestDecompression.csproj" />

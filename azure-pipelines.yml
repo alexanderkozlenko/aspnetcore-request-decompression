@@ -71,7 +71,7 @@ stages:
       inputs:
         command: custom
         custom: test
-        arguments: '$(Build.ProjectPath) -v $(DOTNET_VERBOSITY) -c Release -p:BuildNumber=$(Build.BuildNumber) --no-build -s $(Build.SourcesDirectory)/src/.runsettings -l trx -r $(Common.TestResultsDirectory)'
+        arguments: '$(Build.ProjectPath) -v $(DOTNET_VERBOSITY) -c Release -p:BuildNumber=$(Build.BuildNumber) --no-build --filter TestCategory!=System -s $(Build.SourcesDirectory)/src/.runsettings -l trx -r $(Common.TestResultsDirectory)'
     - task: PublishTestResults@2
       displayName: 'report.publish'
       inputs:

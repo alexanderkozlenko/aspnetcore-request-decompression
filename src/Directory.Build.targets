@@ -1,10 +1,64 @@
 ﻿<!-- © Alexander Kozlenko. Licensed under the MIT License. -->
 <Project>
-  <Target Name="InitializePackageUrls"
+  <!-- Project: Properties -->
+  <PropertyGroup>
+    <LangVersion>8.0</LangVersion>
+    <IsPackable>false</IsPackable>
+    <SonarQubeExclude>true</SonarQubeExclude>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Update="Microsoft.*.Analyzers">
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
+    <PackageReference Update="Microsoft.SourceLink.*">
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+  <PropertyGroup Condition="'$(ContinuousIntegrationBuild)' == 'true'">
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(BuildNumber)' != ''">
+    <NoWarn>$(NoWarn);NU5105</NoWarn>
+  </PropertyGroup>
+  <!-- Project: Properties (Packaging) -->
+  <PropertyGroup Condition="'$(IsPackageProject)' == 'true'">
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)Open.snk</AssemblyOriginatorKeyFile>
+    <GenerateDependencyFile>false</GenerateDependencyFile>
+    <IsPackable>true</IsPackable>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <SonarQubeExclude>false</SonarQubeExclude>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(IsPackageProject)' == 'true' and '$(Configuration)' == 'Release'">
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+  <!-- Project: Properties (Development) -->
+  <PropertyGroup Condition="'$(IsDevelopmentProject)' == 'true'">
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <NoWin32Manifest>true</NoWin32Manifest>
+    <DeterministicSourcePaths>false</DeterministicSourcePaths>
+  </PropertyGroup>
+  <!-- Package: Properties -->
+  <Target Condition="'$(IsPackageProject)' == 'true'"
+          Name="InitializePackageUrls"
           DependsOnTargets="$(SourceLinkUrlInitializerTargets)"
           BeforeTargets="GenerateNuspec">
-    <PropertyGroup>
+    <PropertyGroup Condition="'$(RepositoryUrl)' != ''">
       <PackageProjectUrl>$(RepositoryUrl.Replace('.git', ''))</PackageProjectUrl>
     </PropertyGroup>
   </Target>
+  <PropertyGroup Condition="'$(IsPackageProject)' == 'true'">
+    <PackageIconFileName>PackageIcon.png</PackageIconFileName>
+    <PackageIconFilePath>$(MSBuildProjectDirectory)\Properties\$(PackageIconFileName)</PackageIconFilePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(IsPackageProject)' == 'true' and Exists('$(PackageIconFilePath)')">
+    <PackageIcon>$(PackageIconFileName)</PackageIcon>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(IsPackageProject)' == 'true' and Exists('$(PackageIconFilePath)')">
+    <None Update="$(PackageIconFilePath)">
+      <Pack>true</Pack>
+      <PackagePath>$(PackageIconFileName)</PackagePath>
+    </None>
+  </ItemGroup>
 </Project>
