@@ -1,0 +1,6 @@
+﻿<Project>
+  <!-- Imports: Before SDK Targets -->
+  <PropertyGroup Condition="'$(IsPackageProject)' == 'true' and '$(Configuration)' == 'Release'">
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+</Project>

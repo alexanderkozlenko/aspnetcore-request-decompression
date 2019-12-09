@@ -3,6 +3,8 @@
   <!-- Project: Properties -->
   <PropertyGroup>
     <LangVersion>8.0</LangVersion>
+    <NoWin32Manifest>true</NoWin32Manifest>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <IsPackable>false</IsPackable>
     <SonarQubeExclude>true</SonarQubeExclude>
   </PropertyGroup>
@@ -22,21 +24,22 @@
   </PropertyGroup>
   <!-- Project: Properties (Packaging) -->
   <PropertyGroup Condition="'$(IsPackageProject)' == 'true'">
+    <IsPackable>true</IsPackable>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(IsPackageProject)' == 'true' and '$(OutputType)' == 'Library'">
+    <IsLibraryProject>true</IsLibraryProject>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(IsLibraryProject)' == 'true'">
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)Open.snk</AssemblyOriginatorKeyFile>
     <GenerateDependencyFile>false</GenerateDependencyFile>
-    <IsPackable>true</IsPackable>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <SonarQubeExclude>false</SonarQubeExclude>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(IsPackageProject)' == 'true' and '$(Configuration)' == 'Release'">
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-  </PropertyGroup>
-  <!-- Project: Properties (Development) -->
-  <PropertyGroup Condition="'$(IsDevelopmentProject)' == 'true'">
+  <!-- Project: Properties (Testing) -->
+  <PropertyGroup Condition="'$(IsTestingProject)' == 'true'">
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <NoWin32Manifest>true</NoWin32Manifest>
+    <RollForward>LatestMajor</RollForward>
     <DeterministicSourcePaths>false</DeterministicSourcePaths>
   </PropertyGroup>
   <!-- Package: Properties -->
