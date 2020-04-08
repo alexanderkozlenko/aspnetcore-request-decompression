@@ -39,12 +39,8 @@ namespace Anemonis.AspNetCore.RequestDecompression
             Add(typeof(T));
         }
 
-        /// <summary>Inserts an element into the <see cref="Collection{T}" /> at the specified index.</summary>
-        /// <param name="index">The zero-based index at which item should be inserted.</param>
-        /// <param name="item">The object to insert. The value can be <see langword="null" /> for reference types.</param>
-        /// <exception cref="ArgumentException"><paramref name="item" /> does not implement the <see cref="IDecompressionProvider" /> interface or does not have the <see cref="EncodingNameAttribute" /> attribute applied.</exception>
+        /// <inheritdoc />
         /// <exception cref="ArgumentNullException"><paramref name="item" /> is <see langword="null" />.</exception>
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="index" /> is less than zero or is greater than <see cref="Collection{T}.Count" />.</exception>
         protected sealed override void InsertItem(int index, Type item)
         {
             if (item == null)
@@ -60,12 +56,8 @@ namespace Anemonis.AspNetCore.RequestDecompression
             }
         }
 
-        /// <summary>Replaces the element at the specified index.</summary>
-        /// <param name="index">The zero-based index of the element to replace.</param>
-        /// <param name="item">The new value for the element at the specified index. The value can be null for reference types.</param>
-        /// <exception cref="ArgumentException"><paramref name="item" /> does not implement the <see cref="IDecompressionProvider" /> interface.</exception>
+        /// <inheritdoc />
         /// <exception cref="ArgumentNullException"><paramref name="item" /> is <see langword="null" />.</exception>
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="index" /> is less than zero or is greater than <see cref="Collection{T}.Count" />.</exception>
         protected sealed override void SetItem(int index, Type item)
         {
             if (item == null)
