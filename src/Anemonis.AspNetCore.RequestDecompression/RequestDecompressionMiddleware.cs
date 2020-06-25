@@ -24,7 +24,7 @@ namespace Anemonis.AspNetCore.RequestDecompression
     public sealed class RequestDecompressionMiddleware : IMiddleware, IDisposable
     {
         private static readonly Dictionary<string, IDecompressionProvider> _defaultProviders = new Dictionary<string, IDecompressionProvider>(StringComparer.OrdinalIgnoreCase);
-         
+
         private readonly Dictionary<string, IDecompressionProvider> _providers = new Dictionary<string, IDecompressionProvider>(_defaultProviders, StringComparer.OrdinalIgnoreCase);
         private readonly bool _skipUnsupportedEncodings;
         private readonly ILogger _logger;
@@ -107,6 +107,14 @@ namespace Anemonis.AspNetCore.RequestDecompression
                 await next?.Invoke(context);
 
                 return;
+            }
+
+            // There could be a single StringValues entry with comma delimited contents
+            //  Content-Encoding: gzip, br
+            //  new StringValues("gzip, br")
+            if(encodingNames.Count == 1 && encodingNames[0].Contains(',', StringComparison.Ordinal))
+            {
+                encodingNames = new StringValues(encodingNames[0].Replace(" ", "", StringComparison.Ordinal).Split(','));
             }
 
             var encodingsLeft = encodingNames.Count;
