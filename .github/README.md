@@ -51,11 +51,6 @@ public class Startup
 
     public void Configure(IApplicationBuilder app)
     {
-        if (env.IsDevelopment())
-        {
-            app.UseDeveloperExceptionPage();
-        }
-
         app.UseHttpsRedirection();
         app.UseRouting();
         app.UseAuthorization();
@@ -88,11 +83,6 @@ public class Startup : IStartup
 
     public void Configure(IApplicationBuilder app)
     {
-        if (env.IsDevelopment())
-        {
-            app.UseDeveloperExceptionPage();
-        }
-
         app.UseHttpsRedirection();
         app.UseRouting();
         app.UseAuthorization();
