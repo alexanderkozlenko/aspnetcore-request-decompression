@@ -93,7 +93,7 @@ namespace Anemonis.AspNetCore.RequestDecompression
                 throw new ArgumentNullException(nameof(context));
             }
 
-            if (!context.Request.Headers.TryGetValue(HeaderNames.ContentEncoding, out var encodingNames) && (encodingNames.Count > 0))
+            if (!context.Request.Headers.ContainsKey(HeaderNames.ContentEncoding))
             {
                 await next?.Invoke(context);
 
@@ -110,19 +110,22 @@ namespace Anemonis.AspNetCore.RequestDecompression
             }
 
             // There could be a single StringValues entry with comma delimited contents
-            //  Content-Encoding: gzip, br
-            //  new StringValues("gzip, br")
-            if(encodingNames.Count == 1 && encodingNames[0].Contains(',', StringComparison.Ordinal))
+            //  Content-Encoding: gzip, br, "someEncoding"
+            //  string[] { "gzip", "br", "someEncoding"}
+            var encodingNamesParsed = context.Request.Headers.GetCommaSeparatedValues(HeaderNames.ContentEncoding);
+            if (encodingNamesParsed.Length == 0)
             {
-                encodingNames = new StringValues(encodingNames[0].Replace(" ", "", StringComparison.Ordinal).Split(','));
+                await next?.Invoke(context);
+
+                return;
             }
 
-            var encodingsLeft = encodingNames.Count;
+            var encodingsLeft = encodingNamesParsed.Length;
             var decodingStream = context.Request.Body;
 
-            for (var i = encodingNames.Count - 1; i >= 0; i--)
+            for (var i = encodingNamesParsed.Length - 1; i >= 0; i--)
             {
-                if (!_providers.TryGetValue(encodingNames[i], out var provider))
+                if (!_providers.TryGetValue(encodingNamesParsed[i], out var provider))
                 {
                     _logger.LogRequestDecodingSkipped();
 
@@ -157,7 +160,7 @@ namespace Anemonis.AspNetCore.RequestDecompression
                 context.Request.Body = decodedStream;
             }
 
-            if (encodingsLeft != encodingNames.Count)
+            if (encodingsLeft != encodingNamesParsed.Length)
             {
                 if (encodingsLeft == 0)
                 {
@@ -170,7 +173,7 @@ namespace Anemonis.AspNetCore.RequestDecompression
                 }
                 else if (encodingsLeft == 1)
                 {
-                    context.Request.Headers[HeaderNames.ContentEncoding] = new StringValues(encodingNames[0]);
+                    context.Request.Headers[HeaderNames.ContentEncoding] = new StringValues(encodingNamesParsed[0]);
                 }
                 else
                 {
@@ -178,7 +181,7 @@ namespace Anemonis.AspNetCore.RequestDecompression
 
                     for (var i = 0; i < encodingNamesLeft.Length; i++)
                     {
-                        encodingNamesLeft[i] = encodingNames[i];
+                        encodingNamesLeft[i] = encodingNamesParsed[i];
                     }
 
                     context.Request.Headers[HeaderNames.ContentEncoding] = new StringValues(encodingNamesLeft);

@@ -121,6 +121,8 @@ namespace Anemonis.AspNetCore.RequestDecompression.UnitTests
         [DataRow("unknown deflate gzip br", "", false, StatusCodes.Status415UnsupportedMediaType)]
         [DataRow("identity unknown deflate gzip br", "identity unknown", true, StatusCodes.Status200OK)]
         [DataRow("identity unknown deflate gzip br", "", false, StatusCodes.Status415UnsupportedMediaType)]
+        [DataRow("identity \"unknown\" deflate gzip br", "identity unknown", true, StatusCodes.Status200OK)]
+        [DataRow("identity \"unknown,test\" deflate gzip br", "identity unknown,test", true, StatusCodes.Status200OK)]
         public async Task InvokeAsync(string encoding1, string encoding2, bool skipUnsupportedEncodings, int statusCode)
         {
             var options = new RequestDecompressionOptions();
@@ -203,6 +205,8 @@ namespace Anemonis.AspNetCore.RequestDecompression.UnitTests
         [DataRow("unknown,deflate,gzip,br", "", false, StatusCodes.Status415UnsupportedMediaType)]
         [DataRow("identity,unknown,deflate,gzip,br", "identity,unknown", true, StatusCodes.Status200OK)]
         [DataRow("identity,unknown,deflate,gzip,br", "", false, StatusCodes.Status415UnsupportedMediaType)]
+        [DataRow("identity,\"unknown\",deflate,gzip,br", "identity,unknown", true, StatusCodes.Status200OK)]
+        [DataRow("\"identity\",unknown,deflate,gzip,br", "identity,unknown", true, StatusCodes.Status200OK)]
         public async Task InvokeAsync_SingleStringValue(string encoding1, string encoding2, bool skipUnsupportedEncodings, int statusCode)
         {
             var options = new RequestDecompressionOptions();
