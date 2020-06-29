@@ -110,9 +110,9 @@ namespace Anemonis.AspNetCore.RequestDecompression
             }
 
             // There could be a single StringValues entry with comma delimited contents
-            //  Content-Encoding: gzip, br, "someEncoding"
-            //  string[] { "gzip", "br", "someEncoding"}
+
             var encodingNames = context.Request.Headers.GetCommaSeparatedValues(HeaderNames.ContentEncoding);
+
             if (encodingNames.Length == 0)
             {
                 await next?.Invoke(context);

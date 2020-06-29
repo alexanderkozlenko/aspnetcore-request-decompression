@@ -207,7 +207,7 @@ namespace Anemonis.AspNetCore.RequestDecompression.UnitTests
         [DataRow("identity,unknown,deflate,gzip,br", "", false, StatusCodes.Status415UnsupportedMediaType)]
         [DataRow("identity,\"unknown\",deflate,gzip,br", "identity,unknown", true, StatusCodes.Status200OK)]
         [DataRow("\"identity\",unknown,deflate,gzip,br", "identity,unknown", true, StatusCodes.Status200OK)]
-        public async Task InvokeAsync_SingleStringValue(string encoding1, string encoding2, bool skipUnsupportedEncodings, int statusCode)
+        public async Task InvokeAsyncWhenSingleStringValue(string encoding1, string encoding2, bool skipUnsupportedEncodings, int statusCode)
         {
             var options = new RequestDecompressionOptions();
 
@@ -236,7 +236,9 @@ namespace Anemonis.AspNetCore.RequestDecompression.UnitTests
             var contentBytes2 = default(byte[]);
 
             var encoding1Values = new StringValues(encoding1 == "" ? null : encoding1);
+
             // Middleware adds them back as multiple entries in StringValues
+
             var encoding2Values = new StringValues(encoding2.Split(',', StringSplitOptions.RemoveEmptyEntries));
 
             foreach (var encoding in encoding1.Split(',', StringSplitOptions.RemoveEmptyEntries))

@@ -73,7 +73,7 @@ public class LzmaDecompressionProvider : IDecompressionProvider
     }
 }
 
-public class Startup : IStartup
+public class Startup
 {
     public void ConfigureServices(IServiceCollection services)
     {
