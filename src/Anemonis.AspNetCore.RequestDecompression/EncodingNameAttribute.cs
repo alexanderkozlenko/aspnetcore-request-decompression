@@ -13,7 +13,7 @@ namespace Anemonis.AspNetCore.RequestDecompression
         /// <exception cref="ArgumentNullException"><paramref name="encodingName" /> is <see langword="null" />.</exception>
         public EncodingNameAttribute(string encodingName)
         {
-            if (encodingName == null)
+            if (encodingName is null)
             {
                 throw new ArgumentNullException(nameof(encodingName));
             }

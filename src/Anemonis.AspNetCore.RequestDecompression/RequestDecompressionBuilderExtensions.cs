@@ -15,7 +15,7 @@ namespace Microsoft.AspNetCore.Builder
         /// <exception cref="ArgumentNullException"><paramref name="builder" /> is <see langword="null" />.</exception>
         public static IApplicationBuilder UseRequestDecompression(this IApplicationBuilder builder)
         {
-            if (builder == null)
+            if (builder is null)
             {
                 throw new ArgumentNullException(nameof(builder));
             }

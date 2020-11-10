@@ -14,8 +14,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Moq;
 
-#pragma warning disable IDE0067
-
 namespace Anemonis.AspNetCore.RequestDecompression.UnitTests
 {
     [TestClass]
@@ -174,15 +172,16 @@ namespace Anemonis.AspNetCore.RequestDecompression.UnitTests
 
                 if (encoding2 == "")
                 {
-                    if (httpContext.Request.Body is TestRequestStream)
+                    var requestBody = httpContext.Request.Body;
+
+                    if (requestBody is TestRequestStream)
                     {
-                        contentBytes2 = ((TestRequestStream)httpContext.Request.Body).ToArray();
+                        contentBytes2 = ((TestRequestStream)requestBody).ToArray();
                     }
                     else
                     {
-                        contentBytes2 = ((MemoryStream)httpContext.Request.Body).ToArray();
+                        contentBytes2 = ((MemoryStream)requestBody).ToArray();
                     }
-
 
                     Assert.AreEqual(content, Encoding.UTF8.GetString(contentBytes2));
                 }
@@ -261,13 +260,15 @@ namespace Anemonis.AspNetCore.RequestDecompression.UnitTests
 
                 if (encoding2 == "")
                 {
-                    if (httpContext.Request.Body is TestRequestStream)
+                    var requestBody = httpContext.Request.Body;
+
+                    if (requestBody is TestRequestStream)
                     {
-                        contentBytes2 = ((TestRequestStream)httpContext.Request.Body).ToArray();
+                        contentBytes2 = ((TestRequestStream)requestBody).ToArray();
                     }
                     else
                     {
-                        contentBytes2 = ((MemoryStream)httpContext.Request.Body).ToArray();
+                        contentBytes2 = ((MemoryStream)requestBody).ToArray();
                     }
 
                     Assert.AreEqual(content, Encoding.UTF8.GetString(contentBytes2));

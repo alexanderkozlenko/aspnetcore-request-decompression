@@ -16,16 +16,14 @@ using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
 
-#pragma warning disable CA2007
-
 namespace Anemonis.AspNetCore.RequestDecompression
 {
     /// <summary>Represents a middleware for adding HTTP request decompression to the application's request pipeline.</summary>
     public sealed class RequestDecompressionMiddleware : IMiddleware, IDisposable
     {
-        private static readonly Dictionary<string, IDecompressionProvider> _defaultProviders = new Dictionary<string, IDecompressionProvider>(StringComparer.OrdinalIgnoreCase);
+        private static readonly Dictionary<string, IDecompressionProvider> s_defaultProviders = new(StringComparer.OrdinalIgnoreCase);
 
-        private readonly Dictionary<string, IDecompressionProvider> _providers = new Dictionary<string, IDecompressionProvider>(_defaultProviders, StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, IDecompressionProvider> _providers = new(s_defaultProviders, StringComparer.OrdinalIgnoreCase);
         private readonly bool _skipUnsupportedEncodings;
         private readonly ILogger _logger;
 
@@ -38,7 +36,7 @@ namespace Anemonis.AspNetCore.RequestDecompression
                     var decompressionProvider = (IDecompressionProvider)Activator.CreateInstance(type);
                     var encodingName = type.GetCustomAttribute<EncodingNameAttribute>().EncodingName;
 
-                    _defaultProviders[encodingName] = decompressionProvider;
+                    s_defaultProviders[encodingName] = decompressionProvider;
                 }
             }
         }
@@ -51,15 +49,15 @@ namespace Anemonis.AspNetCore.RequestDecompression
         /// <exception cref="InvalidOperationException">There are more than one provider registered with the same encoding name.</exception>
         public RequestDecompressionMiddleware(IServiceProvider services, IOptions<RequestDecompressionOptions> options, ILogger<RequestDecompressionMiddleware> logger)
         {
-            if (services == null)
+            if (services is null)
             {
                 throw new ArgumentNullException(nameof(services));
             }
-            if (options == null)
+            if (options is null)
             {
                 throw new ArgumentNullException(nameof(options));
             }
-            if (logger == null)
+            if (logger is null)
             {
                 throw new ArgumentNullException(nameof(logger));
             }
@@ -88,7 +86,7 @@ namespace Anemonis.AspNetCore.RequestDecompression
         /// <exception cref="ArgumentNullException"><paramref name="context" /> is <see langword="null" />.</exception>
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
-            if (context == null)
+            if (context is null)
             {
                 throw new ArgumentNullException(nameof(context));
             }
@@ -173,7 +171,7 @@ namespace Anemonis.AspNetCore.RequestDecompression
                 }
                 else if (encodingsLeft == 1)
                 {
-                    context.Request.Headers[HeaderNames.ContentEncoding] = new StringValues(encodingNames[0]);
+                    context.Request.Headers[HeaderNames.ContentEncoding] = new(encodingNames[0]);
                 }
                 else
                 {
@@ -184,7 +182,7 @@ namespace Anemonis.AspNetCore.RequestDecompression
                         encodingNamesLeft[i] = encodingNames[i];
                     }
 
-                    context.Request.Headers[HeaderNames.ContentEncoding] = new StringValues(encodingNamesLeft);
+                    context.Request.Headers[HeaderNames.ContentEncoding] = new(encodingNamesLeft);
                 }
             }
 

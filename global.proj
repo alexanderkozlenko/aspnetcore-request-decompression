@@ -1,4 +1,3 @@
-<!-- © Alexander Kozlenko. Licensed under the MIT License. -->
 <Project>
   <Import Sdk="Microsoft.Build.Traversal"
           Project="Sdk.props"/>
