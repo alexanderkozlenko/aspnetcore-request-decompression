@@ -25,7 +25,7 @@ namespace Anemonis.AspNetCore.RequestDecompression
 
         private static void ValidateProviderType(Type value)
         {
-            if (!typeof(IDecompressionProvider).IsAssignableFrom(value) || (value.GetCustomAttribute<EncodingNameAttribute>() == null))
+            if (!typeof(IDecompressionProvider).IsAssignableFrom(value) || (value.GetCustomAttribute<EncodingNameAttribute>() is null))
             {
                 throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Strings.GetString("provider_collection.invalid_type"), typeof(IDecompressionProvider), typeof(EncodingNameAttribute)), nameof(value));
             }
@@ -43,7 +43,7 @@ namespace Anemonis.AspNetCore.RequestDecompression
         /// <exception cref="ArgumentNullException"><paramref name="item" /> is <see langword="null" />.</exception>
         protected sealed override void InsertItem(int index, Type item)
         {
-            if (item == null)
+            if (item is null)
             {
                 throw new ArgumentNullException(nameof(item));
             }
@@ -60,7 +60,7 @@ namespace Anemonis.AspNetCore.RequestDecompression
         /// <exception cref="ArgumentNullException"><paramref name="item" /> is <see langword="null" />.</exception>
         protected sealed override void SetItem(int index, Type item)
         {
-            if (item == null)
+            if (item is null)
             {
                 throw new ArgumentNullException(nameof(item));
             }

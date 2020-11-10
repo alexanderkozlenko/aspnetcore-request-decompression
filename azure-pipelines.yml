@@ -1,5 +1,3 @@
-# © Alexander Kozlenko. Licensed under the MIT License.
-
 variables:
 - name: 'Build.ProjectPath'
   value: '$(Build.SourcesDirectory)/global.proj'

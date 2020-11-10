@@ -1,5 +1,4 @@
-﻿<!-- © Alexander Kozlenko. Licensed under the MIT License. -->
-<Project>
+﻿<Project>
   <Import Project="$(MSBuildProjectDirectory)\Properties\*.props" />
   <PropertyGroup Condition="'$(VersionSuffix)' != '' and '$(BuildNumber)' != ''">
     <VersionSuffix>$(VersionSuffix)-$(BuildNumber)</VersionSuffix>

@@ -5,7 +5,7 @@ namespace Anemonis.AspNetCore.RequestDecompression
     /// <summary>Provides options for the HTTP request decompression middleware.</summary>
     public sealed class RequestDecompressionOptions
     {
-        private readonly RequestDecompressionProviderCollection _providers = new RequestDecompressionProviderCollection();
+        private readonly RequestDecompressionProviderCollection _providers = new();
 
         /// <summary>Initializes a new instance of the <see cref="RequestDecompressionOptions" /> class.</summary>
         public RequestDecompressionOptions()

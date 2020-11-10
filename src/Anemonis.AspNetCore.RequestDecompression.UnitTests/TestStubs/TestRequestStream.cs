@@ -11,12 +11,12 @@ namespace Anemonis.AspNetCore.RequestDecompression.UnitTests.TestStubs
 
         public TestRequestStream(byte[] buffer)
         {
-            if (buffer == null)
+            if (buffer is null)
             {
                 throw new ArgumentNullException(nameof(buffer));
             }
 
-            _stream = new MemoryStream(buffer);
+            _stream = new(buffer);
         }
 
         public override ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken)
