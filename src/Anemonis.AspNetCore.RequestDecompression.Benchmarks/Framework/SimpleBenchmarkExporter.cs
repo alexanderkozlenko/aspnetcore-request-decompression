@@ -24,7 +24,7 @@ namespace Anemonis.AspNetCore.RequestDecompression.Benchmarks.Framework
 
             for (var i = 0; i < summary.Table.FullHeader.Length; i++)
             {
-                separator[i] = new string('-', summary.Table.Columns[i].Width);
+                separator[i] = new('-', summary.Table.Columns[i].Width);
             }
 
             summary.Table.PrintLine(separator, logger, string.Empty, "-|");
