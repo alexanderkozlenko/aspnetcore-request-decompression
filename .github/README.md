@@ -1,6 +1,6 @@
 # Anemonis.AspNetCore.RequestDecompression
 
-Transparent HTTP request decompression middleware for ASP.NET Core in .NET 5 based on the [RFC 7231](https://tools.ietf.org/html/rfc7231#section-3.1.2.2), which serves as a complementary component to the [Microsoft.AspNetCore.ResponseCompression](https://www.nuget.org/packages/Microsoft.AspNetCore.ResponseCompression/) package.
+Transparent HTTP request decompression middleware for ASP.NET Core in .NET 5 based on the [RFC 7231](https://tools.ietf.org/html/rfc7231#section-3.1.2.2), which serves as a complementary component to the [Microsoft.AspNetCore.ResponseCompression](https://github.com/dotnet/aspnetcore/tree/master/src/Middleware/ResponseCompression) package.
 
 | [![](https://img.shields.io/gitter/room/nwjs/nw.js.svg?style=flat-square)](https://gitter.im/anemonis/aspnetcore-request-decompression) | Release | Current |
 |---|---|---|
