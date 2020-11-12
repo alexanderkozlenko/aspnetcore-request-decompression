@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 
@@ -142,20 +141,7 @@ namespace Anemonis.AspNetCore.RequestDecompression
                 encodingsLeft--;
             }
 
-            var decodedStream = default(Stream);
-
-            if (decodingStream != context.Request.Body)
-            {
-                decodedStream = new MemoryStream();
-
-                using (decodingStream)
-                {
-                    await decodingStream.CopyToAsync(decodedStream, context.RequestAborted);
-                }
-
-                decodedStream.Position = 0L;
-                context.Request.Body = decodedStream;
-            }
+            context.Request.Body = decodingStream;
 
             if (encodingsLeft != encodingNames.Length)
             {
@@ -185,14 +171,7 @@ namespace Anemonis.AspNetCore.RequestDecompression
                 }
             }
 
-            try
-            {
-                await next?.Invoke(context);
-            }
-            finally
-            {
-                decodedStream?.Dispose();
-            }
+            await next?.Invoke(context);
         }
 
         /// <inheritdoc />

@@ -98,7 +98,7 @@ namespace Anemonis.AspNetCore.RequestDecompression.UnitTests
             httpContext.Request.Method = HttpMethods.Post;
             httpContext.Request.Headers.Add(HeaderNames.ContentEncoding, "encoding");
             httpContext.Request.Headers.Add(HeaderNames.ContentRange, "0-*/*");
-            httpContext.Request.Body = new TestRequestStream(contentBytes);
+            httpContext.Request.Body = new MemoryStream(contentBytes);
 
             await middleware.InvokeAsync(httpContext, c => Task.CompletedTask);
 
@@ -147,7 +147,6 @@ namespace Anemonis.AspNetCore.RequestDecompression.UnitTests
             var content = "Hello World!";
 
             var contentBytes1 = Encoding.UTF8.GetBytes(content);
-            var contentBytes2 = default(byte[]);
 
             var encoding1Values = new StringValues(encoding1.Split(' ', StringSplitOptions.RemoveEmptyEntries));
             var encoding2Values = new StringValues(encoding2.Split(' ', StringSplitOptions.RemoveEmptyEntries));
@@ -161,7 +160,7 @@ namespace Anemonis.AspNetCore.RequestDecompression.UnitTests
 
             httpContext.Request.Method = HttpMethods.Post;
             httpContext.Request.Headers.Add(HeaderNames.ContentEncoding, encoding1Values);
-            httpContext.Request.Body = new TestRequestStream(contentBytes1);
+            httpContext.Request.Body = new MemoryStream(contentBytes1);
 
             await middleware.InvokeAsync(httpContext, c => Task.CompletedTask);
 
@@ -172,18 +171,7 @@ namespace Anemonis.AspNetCore.RequestDecompression.UnitTests
 
                 if (encoding2 == "")
                 {
-                    var requestBody = httpContext.Request.Body;
-
-                    if (requestBody is TestRequestStream)
-                    {
-                        contentBytes2 = ((TestRequestStream)requestBody).ToArray();
-                    }
-                    else
-                    {
-                        contentBytes2 = ((MemoryStream)requestBody).ToArray();
-                    }
-
-                    Assert.AreEqual(content, Encoding.UTF8.GetString(contentBytes2));
+                    Assert.AreEqual(content, await GetStringAsync(httpContext.Request.Body));
                 }
             }
 
@@ -232,7 +220,6 @@ namespace Anemonis.AspNetCore.RequestDecompression.UnitTests
             var content = "Hello World!";
 
             var contentBytes1 = Encoding.UTF8.GetBytes(content);
-            var contentBytes2 = default(byte[]);
 
             var encoding1Values = new StringValues(encoding1 == "" ? null : encoding1);
 
@@ -249,7 +236,7 @@ namespace Anemonis.AspNetCore.RequestDecompression.UnitTests
 
             httpContext.Request.Method = HttpMethods.Post;
             httpContext.Request.Headers.Add(HeaderNames.ContentEncoding, encoding1Values);
-            httpContext.Request.Body = new TestRequestStream(contentBytes1);
+            httpContext.Request.Body = new MemoryStream(contentBytes1);
 
             await middleware.InvokeAsync(httpContext, c => Task.CompletedTask);
 
@@ -260,22 +247,19 @@ namespace Anemonis.AspNetCore.RequestDecompression.UnitTests
 
                 if (encoding2 == "")
                 {
-                    var requestBody = httpContext.Request.Body;
-
-                    if (requestBody is TestRequestStream)
-                    {
-                        contentBytes2 = ((TestRequestStream)requestBody).ToArray();
-                    }
-                    else
-                    {
-                        contentBytes2 = ((MemoryStream)requestBody).ToArray();
-                    }
-
-                    Assert.AreEqual(content, Encoding.UTF8.GetString(contentBytes2));
+                    Assert.AreEqual(content, await GetStringAsync(httpContext.Request.Body));
                 }
             }
 
             Assert.AreEqual(statusCode, httpContext.Response.StatusCode);
+        }
+
+        private static async Task<string> GetStringAsync(Stream stream)
+        {
+            using (var streamReader = new StreamReader(stream, Encoding.UTF8))
+            {
+                return await streamReader.ReadToEndAsync();
+            }
         }
     }
 }
