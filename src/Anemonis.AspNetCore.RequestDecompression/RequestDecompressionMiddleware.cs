@@ -19,14 +19,16 @@ namespace Anemonis.AspNetCore.RequestDecompression
     /// <summary>Represents a middleware for adding HTTP request decompression to the application's request pipeline.</summary>
     public sealed class RequestDecompressionMiddleware : IMiddleware, IDisposable
     {
-        private static readonly Dictionary<string, IDecompressionProvider> s_defaultProviders = new(StringComparer.OrdinalIgnoreCase);
+        private static readonly Dictionary<string, IDecompressionProvider> s_defaultProviders = GetDefaultProviders();
 
         private readonly Dictionary<string, IDecompressionProvider> _providers = new(s_defaultProviders, StringComparer.OrdinalIgnoreCase);
         private readonly bool _skipUnsupportedEncodings;
         private readonly ILogger _logger;
 
-        static RequestDecompressionMiddleware()
+        private static Dictionary<string, IDecompressionProvider> GetDefaultProviders()
         {
+            var providers = new Dictionary<string, IDecompressionProvider>(StringComparer.OrdinalIgnoreCase);
+
             foreach (var type in Assembly.GetExecutingAssembly().DefinedTypes)
             {
                 if (typeof(IDecompressionProvider).IsAssignableFrom(type) && type.IsNotPublic)
@@ -34,9 +36,11 @@ namespace Anemonis.AspNetCore.RequestDecompression
                     var decompressionProvider = (IDecompressionProvider)Activator.CreateInstance(type);
                     var encodingName = type.GetCustomAttribute<EncodingNameAttribute>().EncodingName;
 
-                    s_defaultProviders[encodingName] = decompressionProvider;
+                    providers[encodingName] = decompressionProvider;
                 }
             }
+
+            return providers;
         }
 
         /// <summary>Initializes a new instance of the <see cref="RequestDecompressionMiddleware" /> class.</summary>
