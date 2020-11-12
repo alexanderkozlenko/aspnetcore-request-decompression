@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
-using System.Reflection;
 
 using Anemonis.AspNetCore.RequestDecompression.Resources;
 
@@ -25,9 +24,9 @@ namespace Anemonis.AspNetCore.RequestDecompression
 
         private static void ValidateProviderType(Type value)
         {
-            if (!typeof(IDecompressionProvider).IsAssignableFrom(value) || (value.GetCustomAttribute<EncodingNameAttribute>() is null))
+            if (!typeof(IDecompressionProvider).IsAssignableFrom(value))
             {
-                throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Strings.GetString("provider_collection.invalid_type"), typeof(IDecompressionProvider), typeof(EncodingNameAttribute)), nameof(value));
+                throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Strings.GetString("provider_collection.invalid_type"), typeof(IDecompressionProvider)), nameof(value));
             }
         }
 

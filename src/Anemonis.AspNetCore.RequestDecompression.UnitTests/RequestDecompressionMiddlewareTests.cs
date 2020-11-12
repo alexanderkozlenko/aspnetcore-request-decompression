@@ -50,12 +50,11 @@ namespace Anemonis.AspNetCore.RequestDecompression.UnitTests
         }
 
         [TestMethod]
-        public void ConstructorWithDuplicateEncodings()
+        public void ConstructorWithNoEncodingName()
         {
             var options = new RequestDecompressionOptions();
 
-            options.Providers.Add<TestDecompressionProvider20>();
-            options.Providers.Add<TestDecompressionProvider21>();
+            options.Providers.Add<TestDecompressionProvider00>();
 
             var serviceProviderMock = new Mock<IServiceProvider>(MockBehavior.Strict);
             var optionsMock = new Mock<IOptions<RequestDecompressionOptions>>(MockBehavior.Strict);
