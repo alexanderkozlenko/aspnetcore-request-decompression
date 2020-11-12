@@ -132,10 +132,10 @@
   <data name="logging.decoding_skipped" xml:space="preserve">
     <value>The request's content will not be decoded due to an unknown encoding</value>
   </data>
-  <data name="middleware.duplicate_encoding_name" xml:space="preserve">
-    <value>There are more than one provider registered with the same encoding name: "{0}"</value>
+  <data name="middleware.no_encoding_name" xml:space="preserve">
+    <value>There is no encoding name specified for the provider {0}</value>
   </data>
   <data name="provider_collection.invalid_type" xml:space="preserve">
-    <value>The specified type does not implement {0} interface or does not have {1} attribute applied</value>
+    <value>The specified type does not implement {0} interface</value>
   </data>
 </root>

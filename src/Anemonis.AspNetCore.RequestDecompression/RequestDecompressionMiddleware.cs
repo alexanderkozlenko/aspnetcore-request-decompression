@@ -34,7 +34,8 @@ namespace Anemonis.AspNetCore.RequestDecompression
                 if (typeof(IDecompressionProvider).IsAssignableFrom(type) && type.IsNotPublic)
                 {
                     var decompressionProvider = (IDecompressionProvider)Activator.CreateInstance(type);
-                    var encodingName = type.GetCustomAttribute<EncodingNameAttribute>().EncodingName;
+                    var encodingNameAttribute = type.GetCustomAttribute<EncodingNameAttribute>();
+                    var encodingName = encodingNameAttribute.EncodingName;
 
                     providers[encodingName] = decompressionProvider;
                 }
@@ -71,12 +72,14 @@ namespace Anemonis.AspNetCore.RequestDecompression
             foreach (var decompressionProviderType in decompressionOptions.Providers)
             {
                 var decompressionProvider = (IDecompressionProvider)ActivatorUtilities.CreateInstance(services, decompressionProviderType);
-                var encodingName = decompressionProviderType.GetCustomAttribute<EncodingNameAttribute>().EncodingName;
+                var encodingNameAttribute = decompressionProviderType.GetCustomAttribute<EncodingNameAttribute>();
 
-                if (_providers.ContainsKey(encodingName))
+                if (encodingNameAttribute is null)
                 {
-                    throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, Strings.GetString("middleware.duplicate_encoding_name"), encodingName));
+                    throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, Strings.GetString("middleware.no_encoding_name"), decompressionProvider.GetType()));
                 }
+
+                var encodingName = encodingNameAttribute.EncodingName;
 
                 _providers[encodingName] = decompressionProvider;
             }

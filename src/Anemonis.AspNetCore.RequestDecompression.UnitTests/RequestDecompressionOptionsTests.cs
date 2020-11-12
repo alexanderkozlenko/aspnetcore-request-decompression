@@ -54,15 +54,6 @@ namespace Anemonis.AspNetCore.RequestDecompression.UnitTests
         }
 
         [TestMethod]
-        public void AddProviderWithTypeWhenTypeDoesNotHaveAttribute()
-        {
-            var options = new RequestDecompressionOptions();
-
-            Assert.ThrowsException<ArgumentException>(() =>
-                options.Providers.Add(typeof(TestDecompressionProvider00)));
-        }
-
-        [TestMethod]
         public void AddProviderWithTypeWhenTypeDoesNotImplementInterface()
         {
             var options = new RequestDecompressionOptions();
