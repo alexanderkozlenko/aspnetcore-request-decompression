@@ -16,7 +16,8 @@ Encodings supported:
 | --- | :---: | --- |
 | `br` | Yes | [Brotli compressed data format](https://tools.ietf.org/html/rfc7932) |
 | `deflate` | Yes | [DEFLATE compressed data format](https://tools.ietf.org/html/rfc1951) |
-| `gzip` | Yes | [Gzip file format](https://tools.ietf.org/html/rfc1952) |
+| `gzip` | Yes | [GZIP file format](https://tools.ietf.org/html/rfc1952) |
+| `zlib` | No | [ZLIB compressed data format](https://tools.ietf.org/html/rfc1950) |
 | `identity` | Yes | "No encoding" identifier: The request must not be decoded. |
 
 - The middleware supports decoding of content with multiple encodings.
