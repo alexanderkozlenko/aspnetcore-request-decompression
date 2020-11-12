@@ -26,19 +26,28 @@ namespace Anemonis.AspNetCore.RequestDecompression
                 new(1300, "REQDEC_DECODING_DISABLED"),
                 Strings.GetString("logging.decoding_disabled"));
 
-        public static void LogRequestDecodingApplied(this ILogger logger, Type type)
+        public static void LogRequestDecodingApplied(this ILogger logger, IDecompressionProvider provider)
         {
-            s_logRequestDecodingApplied.Invoke(logger, type, null);
+            if (logger.IsEnabled(LogLevel.Debug))
+            {
+                s_logRequestDecodingApplied.Invoke(logger, provider.GetType(), null);
+            }
         }
 
         public static void LogRequestDecodingSkipped(this ILogger logger)
         {
-            s_logRequestDecodingSkipped.Invoke(logger, null);
+            if (logger.IsEnabled(LogLevel.Debug))
+            {
+                s_logRequestDecodingSkipped.Invoke(logger, null);
+            }
         }
 
         public static void LogRequestDecodingDisabled(this ILogger logger)
         {
-            s_logRequestDecodingDisabled.Invoke(logger, null);
+            if (logger.IsEnabled(LogLevel.Warning))
+            {
+                s_logRequestDecodingDisabled.Invoke(logger, null);
+            }
         }
     }
 }

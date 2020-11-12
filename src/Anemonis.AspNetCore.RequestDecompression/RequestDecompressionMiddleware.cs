@@ -139,7 +139,7 @@ namespace Anemonis.AspNetCore.RequestDecompression
                     break;
                 }
 
-                _logger.LogRequestDecodingApplied(provider.GetType());
+                _logger.LogRequestDecodingApplied(provider);
 
                 decodingStream = provider.CreateStream(decodingStream);
                 encodingsLeft--;
