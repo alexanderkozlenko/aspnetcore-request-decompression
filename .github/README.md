@@ -10,7 +10,7 @@ Transparent HTTP request decompression middleware for ASP.NET Core in .NET 5 bas
 
 ## Project Details
 
-Encodings supported:
+Encodings supported by default:
 
 | `Content-Encoding` | Suported | Description |
 | --- | :---: | --- |
