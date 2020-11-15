@@ -19,7 +19,7 @@ namespace Anemonis.AspNetCore.RequestDecompression
     /// <summary>Represents a middleware for adding HTTP request decompression to the application's request pipeline.</summary>
     public sealed class RequestDecompressionMiddleware : IMiddleware, IDisposable
     {
-        private readonly Dictionary<string, IDecompressionProvider> _providers = new(StringComparer.OrdinalIgnoreCase);
+        private readonly IReadOnlyDictionary<string, IDecompressionProvider> _providers;
         private readonly bool _skipUnsupportedEncodings;
         private readonly ILogger _logger;
 
@@ -30,26 +30,9 @@ namespace Anemonis.AspNetCore.RequestDecompression
         /// <exception cref="InvalidOperationException">A decompression provider registered with encoding name specified.</exception>
         public RequestDecompressionMiddleware(IServiceProvider services, IOptions<RequestDecompressionOptions> options, ILogger<RequestDecompressionMiddleware> logger)
         {
+            _providers = CreateProviders(services, options.Value.Providers);
+            _skipUnsupportedEncodings = options.Value.SkipUnsupportedEncodings;
             _logger = logger;
-
-            var decompressionOptions = options.Value;
-
-            foreach (var decompressionProviderType in decompressionOptions.Providers)
-            {
-                var decompressionProvider = (IDecompressionProvider)ActivatorUtilities.CreateInstance(services, decompressionProviderType);
-                var encodingNameAttribute = decompressionProviderType.GetCustomAttribute<EncodingNameAttribute>();
-
-                if (encodingNameAttribute is null)
-                {
-                    throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, Strings.GetString("middleware.no_encoding_name"), decompressionProvider.GetType()));
-                }
-
-                var encodingName = encodingNameAttribute.EncodingName;
-
-                _providers[encodingName] = decompressionProvider;
-            }
-
-            _skipUnsupportedEncodings = decompressionOptions.SkipUnsupportedEncodings;
         }
 
         /// <inheritdoc />
@@ -144,6 +127,25 @@ namespace Anemonis.AspNetCore.RequestDecompression
             {
                 (provider as IDisposable)?.Dispose();
             }
+        }
+
+        private static IReadOnlyDictionary<string, IDecompressionProvider> CreateProviders(IServiceProvider services, IReadOnlyCollection<Type> providerTypes)
+        {
+            var providers = new Dictionary<string, IDecompressionProvider>(providerTypes.Count, StringComparer.OrdinalIgnoreCase);
+
+            foreach (var providerType in providerTypes)
+            {
+                var encodingNameAttribute = providerType.GetCustomAttribute<EncodingNameAttribute>();
+
+                if (encodingNameAttribute is null)
+                {
+                    throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, Strings.GetString("middleware.no_encoding_name"), providerType));
+                }
+
+                providers[encodingNameAttribute.EncodingName] = (IDecompressionProvider)ActivatorUtilities.CreateInstance(services, providerType);
+            }
+
+            return providers;
         }
     }
 }

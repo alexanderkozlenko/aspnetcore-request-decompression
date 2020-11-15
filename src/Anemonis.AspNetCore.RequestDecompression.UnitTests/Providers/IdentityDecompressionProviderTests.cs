@@ -10,7 +10,7 @@ namespace Anemonis.AspNetCore.RequestDecompression.UnitTests.Providers
         [TestMethod]
         public void CreateStream()
         {
-            var provider = new IdentityDecompressionProvider() as IDecompressionProvider;
+            var provider = new IdentityDecompressionProvider();
             var stream = provider.CreateStream(new MemoryStream());
 
             Assert.IsNotNull(stream);
