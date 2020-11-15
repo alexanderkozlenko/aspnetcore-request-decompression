@@ -2,14 +2,18 @@
 
 using System.IO;
 
-#pragma warning disable CA1812
-
 namespace Anemonis.AspNetCore.RequestDecompression
 {
+    /// <summary>Represents "gzip" decompression provider.</summary>
     [EncodingName("identity")]
-    internal sealed class IdentityDecompressionProvider : IDecompressionProvider
+    public sealed class IdentityDecompressionProvider : IDecompressionProvider
     {
-        public Stream CreateStream(Stream outputStream)
+        /// <summary>Initializes a new instance of the <see cref="IdentityDecompressionProvider" /> class.</summary>
+        public IdentityDecompressionProvider()
+        {
+        }
+
+        Stream IDecompressionProvider.CreateStream(Stream outputStream)
         {
             return outputStream;
         }

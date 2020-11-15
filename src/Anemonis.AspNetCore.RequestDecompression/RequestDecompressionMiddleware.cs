@@ -19,52 +19,17 @@ namespace Anemonis.AspNetCore.RequestDecompression
     /// <summary>Represents a middleware for adding HTTP request decompression to the application's request pipeline.</summary>
     public sealed class RequestDecompressionMiddleware : IMiddleware, IDisposable
     {
-        private static readonly Dictionary<string, IDecompressionProvider> s_defaultProviders = GetDefaultProviders();
-
-        private readonly Dictionary<string, IDecompressionProvider> _providers = new(s_defaultProviders, StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, IDecompressionProvider> _providers = new(StringComparer.OrdinalIgnoreCase);
         private readonly bool _skipUnsupportedEncodings;
         private readonly ILogger _logger;
-
-        private static Dictionary<string, IDecompressionProvider> GetDefaultProviders()
-        {
-            var providers = new Dictionary<string, IDecompressionProvider>(StringComparer.OrdinalIgnoreCase);
-
-            foreach (var type in Assembly.GetExecutingAssembly().DefinedTypes)
-            {
-                if (typeof(IDecompressionProvider).IsAssignableFrom(type) && type.IsNotPublic)
-                {
-                    var decompressionProvider = (IDecompressionProvider)Activator.CreateInstance(type);
-                    var encodingNameAttribute = type.GetCustomAttribute<EncodingNameAttribute>();
-                    var encodingName = encodingNameAttribute.EncodingName;
-
-                    providers[encodingName] = decompressionProvider;
-                }
-            }
-
-            return providers;
-        }
 
         /// <summary>Initializes a new instance of the <see cref="RequestDecompressionMiddleware" /> class.</summary>
         /// <param name="services">The <see cref="IServiceProvider" /> instance for retrieving service objects.</param>
         /// <param name="options">The <see cref="IOptions{T}" /> instance for retrieving decompression options.</param>
         /// <param name="logger">The <see cref="ILogger{T}" /> instance for logging.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="services" />, <paramref name="options" />, or <paramref name="logger" /> is <see langword="null" />.</exception>
-        /// <exception cref="InvalidOperationException">There are more than one provider registered with the same encoding name.</exception>
+        /// <exception cref="InvalidOperationException">A decompression provider registered with encoding name specified.</exception>
         public RequestDecompressionMiddleware(IServiceProvider services, IOptions<RequestDecompressionOptions> options, ILogger<RequestDecompressionMiddleware> logger)
         {
-            if (services is null)
-            {
-                throw new ArgumentNullException(nameof(services));
-            }
-            if (options is null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
-            if (logger is null)
-            {
-                throw new ArgumentNullException(nameof(logger));
-            }
-
             _logger = logger;
 
             var decompressionOptions = options.Value;
@@ -88,43 +53,34 @@ namespace Anemonis.AspNetCore.RequestDecompression
         }
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException"><paramref name="context" /> is <see langword="null" />.</exception>
-        public async Task InvokeAsync(HttpContext context, RequestDelegate next)
+        public Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
-            if (context is null)
+            var request = context.Request;
+            var requestHeaders = request.Headers;
+
+            if (!requestHeaders.ContainsKey(HeaderNames.ContentEncoding))
             {
-                throw new ArgumentNullException(nameof(context));
+                return next.Invoke(context);
             }
 
-            if (!context.Request.Headers.ContainsKey(HeaderNames.ContentEncoding))
-            {
-                await next?.Invoke(context);
-
-                return;
-            }
-
-            if (context.Request.Headers.ContainsKey(HeaderNames.ContentRange))
+            if (requestHeaders.ContainsKey(HeaderNames.ContentRange))
             {
                 _logger.LogRequestDecodingDisabled();
 
-                await next?.Invoke(context);
-
-                return;
+                return next.Invoke(context);
             }
 
             // There could be a single StringValues entry with comma delimited contents
 
-            var encodingNames = context.Request.Headers.GetCommaSeparatedValues(HeaderNames.ContentEncoding);
+            var encodingNames = requestHeaders.GetCommaSeparatedValues(HeaderNames.ContentEncoding);
 
             if (encodingNames.Length == 0)
             {
-                await next?.Invoke(context);
-
-                return;
+                return next.Invoke(context);
             }
 
             var encodingsLeft = encodingNames.Length;
-            var decodingStream = context.Request.Body;
+            var requestBody = request.Body;
 
             for (var i = encodingNames.Length - 1; i >= 0; i--)
             {
@@ -136,34 +92,34 @@ namespace Anemonis.AspNetCore.RequestDecompression
                     {
                         context.Response.StatusCode = StatusCodes.Status415UnsupportedMediaType;
 
-                        return;
+                        return Task.CompletedTask;
                     }
 
                     break;
                 }
 
-                _logger.LogRequestDecodingApplied(provider);
-
-                decodingStream = provider.CreateStream(decodingStream);
+                requestBody = provider.CreateStream(requestBody);
                 encodingsLeft--;
+
+                _logger.LogRequestDecodingApplied(provider);
             }
 
-            context.Request.Body = decodingStream;
+            request.Body = requestBody;
 
             if (encodingsLeft != encodingNames.Length)
             {
                 if (encodingsLeft == 0)
                 {
-                    if (context.Request.Body.CanSeek)
+                    if (requestBody.CanSeek)
                     {
-                        context.Request.ContentLength = context.Request.Body.Length;
+                        request.ContentLength = requestBody.Length;
                     }
 
-                    context.Request.Headers.Remove(HeaderNames.ContentEncoding);
+                    requestHeaders.Remove(HeaderNames.ContentEncoding);
                 }
                 else if (encodingsLeft == 1)
                 {
-                    context.Request.Headers[HeaderNames.ContentEncoding] = new(encodingNames[0]);
+                    requestHeaders[HeaderNames.ContentEncoding] = new(encodingNames[0]);
                 }
                 else
                 {
@@ -174,11 +130,11 @@ namespace Anemonis.AspNetCore.RequestDecompression
                         encodingNamesLeft[i] = encodingNames[i];
                     }
 
-                    context.Request.Headers[HeaderNames.ContentEncoding] = new(encodingNamesLeft);
+                    requestHeaders[HeaderNames.ContentEncoding] = new(encodingNamesLeft);
                 }
             }
 
-            await next?.Invoke(context);
+            return next.Invoke(context);
         }
 
         /// <inheritdoc />

@@ -20,36 +20,6 @@ namespace Anemonis.AspNetCore.RequestDecompression.UnitTests
     public sealed partial class RequestDecompressionMiddlewareTests
     {
         [TestMethod]
-        public void ConstructorWithServicesAndOptionsWhenServicesIsNull()
-        {
-            var optionsMock = new Mock<IOptions<RequestDecompressionOptions>>(MockBehavior.Strict);
-            var loggerMock = new Mock<ILogger<RequestDecompressionMiddleware>>(MockBehavior.Loose);
-
-            Assert.ThrowsException<ArgumentNullException>(() =>
-                new RequestDecompressionMiddleware(null, optionsMock.Object, loggerMock.Object));
-        }
-
-        [TestMethod]
-        public void ConstructorWithServicesAndOptionsWhenOptionsIsNull()
-        {
-            var serviceProviderMock = new Mock<IServiceProvider>(MockBehavior.Strict);
-            var loggerMock = new Mock<ILogger<RequestDecompressionMiddleware>>(MockBehavior.Loose);
-
-            Assert.ThrowsException<ArgumentNullException>(() =>
-                new RequestDecompressionMiddleware(serviceProviderMock.Object, null, loggerMock.Object));
-        }
-
-        [TestMethod]
-        public void ConstructorWithServicesAndOptionsWhenLoggerIsNull()
-        {
-            var serviceProviderMock = new Mock<IServiceProvider>(MockBehavior.Strict);
-            var optionsMock = new Mock<IOptions<RequestDecompressionOptions>>(MockBehavior.Strict);
-
-            Assert.ThrowsException<ArgumentNullException>(() =>
-                new RequestDecompressionMiddleware(serviceProviderMock.Object, optionsMock.Object, null));
-        }
-
-        [TestMethod]
         public void ConstructorWithNoEncodingName()
         {
             var options = new RequestDecompressionOptions();
@@ -124,6 +94,7 @@ namespace Anemonis.AspNetCore.RequestDecompression.UnitTests
         {
             var options = new RequestDecompressionOptions();
 
+            options.Providers.Add<IdentityDecompressionProvider>();
             options.Providers.Add<DeflateDecompressionProvider>();
             options.Providers.Add<GzipDecompressionProvider>();
             options.Providers.Add<BrotliDecompressionProvider>();
@@ -197,6 +168,7 @@ namespace Anemonis.AspNetCore.RequestDecompression.UnitTests
         {
             var options = new RequestDecompressionOptions();
 
+            options.Providers.Add<IdentityDecompressionProvider>();
             options.Providers.Add<DeflateDecompressionProvider>();
             options.Providers.Add<GzipDecompressionProvider>();
             options.Providers.Add<BrotliDecompressionProvider>();
