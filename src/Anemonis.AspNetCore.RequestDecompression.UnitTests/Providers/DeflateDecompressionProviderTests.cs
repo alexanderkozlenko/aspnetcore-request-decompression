@@ -10,7 +10,7 @@ namespace Anemonis.AspNetCore.RequestDecompression.UnitTests.Providers
         [TestMethod]
         public void CreateStream()
         {
-            var provider = new DeflateDecompressionProvider() as IDecompressionProvider;
+            var provider = new DeflateDecompressionProvider();
             var stream = provider.CreateStream(new MemoryStream());
 
             Assert.IsNotNull(stream);

@@ -14,7 +14,8 @@ namespace Anemonis.AspNetCore.RequestDecompression
         {
         }
 
-        Stream IDecompressionProvider.CreateStream(Stream outputStream)
+        /// <inheritdoc />
+        public Stream CreateStream(Stream outputStream)
         {
             return new DeflateStream(outputStream, CompressionMode.Decompress);
         }
