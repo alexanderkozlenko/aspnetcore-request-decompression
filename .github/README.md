@@ -42,6 +42,7 @@ public class Startup
     {
         services.AddRequestDecompression(o =>
             {
+                o.Providers.Add<IdentityDecompressionProvider>();
                 o.Providers.Add<DeflateDecompressionProvider>();
                 o.Providers.Add<GzipDecompressionProvider>();
                 o.Providers.Add<BrotliDecompressionProvider>();
@@ -65,12 +66,12 @@ public class Startup
 }
 ```
 ```cs
-[EncodingName("lzma")]
-public class LzmaDecompressionProvider : IDecompressionProvider
+[EncodingName("zlib")]
+public class ZLibDecompressionProvider : IDecompressionProvider
 {
     public Stream CreateStream(Stream outputStream)
     {
-        return new LzmaStream(outputStream, CompressionMode.Decompress);
+        return new ZLibStream(outputStream, CompressionMode.Decompress);
     }
 }
 
@@ -78,7 +79,7 @@ public class Startup
 {
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddRequestDecompression(o => o.Providers.Add<LzmaDecompressionProvider>());
+        services.AddRequestDecompression(o => o.Providers.Add<ZLibDecompressionProvider>());
         services.AddControllers();
     }
 

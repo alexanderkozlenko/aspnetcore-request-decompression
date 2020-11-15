@@ -117,12 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="logging.content_encoded" xml:space="preserve">
-    <value>The request has content with encodings applied (count: {0})</value>
-  </data>
-  <data name="logging.content_not_encoded" xml:space="preserve">
-    <value>The request has content without encodings applied</value>
-  </data>
   <data name="logging.decoding_applied" xml:space="preserve">
     <value>The request's content will be decoded with the {0} provider</value>
   </data>
