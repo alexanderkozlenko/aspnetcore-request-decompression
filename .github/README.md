@@ -2,7 +2,7 @@
 
 Transparent HTTP request decompression middleware for ASP.NET Core in .NET 5 based on the [RFC 7231](https://tools.ietf.org/html/rfc7231#section-3.1.2.2), which serves as a complementary component to the [Microsoft.AspNetCore.ResponseCompression](https://github.com/dotnet/aspnetcore/tree/master/src/Middleware/ResponseCompression) package.
 
-| [![](https://img.shields.io/gitter/room/nwjs/nw.js.svg?style=flat-square)](https://gitter.im/anemonis/aspnetcore-request-decompression) | Release | Current |
+| | Release | Current |
 |---|---|---|
 | Artifacts | [![](https://img.shields.io/nuget/vpre/Anemonis.AspNetCore.RequestDecompression.svg?style=flat-square)](https://www.nuget.org/packages/Anemonis.AspNetCore.RequestDecompression) | [![](https://img.shields.io/myget/alexanderkozlenko/vpre/Anemonis.AspNetCore.RequestDecompression.svg?label=myget&style=flat-square)](https://www.myget.org/feed/alexanderkozlenko/package/nuget/Anemonis.AspNetCore.RequestDecompression) |
 | Code Health | | [![](https://img.shields.io/sonar/coverage/aspnetcore-request-decompression?format=long&server=https%3A%2F%2Fsonarcloud.io&style=flat-square)](https://sonarcloud.io/component_measures?id=aspnetcore-request-decompression&metric=coverage&view=list) [![](https://img.shields.io/sonar/violations/aspnetcore-request-decompression?format=long&server=https%3A%2F%2Fsonarcloud.io&style=flat-square)](https://sonarcloud.io/project/issues?id=aspnetcore-request-decompression&resolved=false) |
