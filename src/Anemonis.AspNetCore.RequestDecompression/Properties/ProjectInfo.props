@@ -2,11 +2,11 @@
   <PropertyGroup>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <VersionPrefix>1.10.0</VersionPrefix>
-    <VersionSuffix>beta</VersionSuffix>
+    <VersionSuffix></VersionSuffix>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Authors><![CDATA[Alexander Kozlenko]]></Authors>
     <Copyright><![CDATA[© $(Authors). All rights reserved.]]></Copyright>
-    <Description><![CDATA[Transparent HTTP request decompression middleware for ASP.NET Core 3]]></Description>
+    <Description><![CDATA[Transparent HTTP request decompression middleware for ASP.NET Core]]></Description>
     <PackageTags><![CDATA[aspnetcore decompression gzip deflate brotli]]></PackageTags>
   </PropertyGroup>
 </Project>

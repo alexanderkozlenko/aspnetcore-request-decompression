@@ -21,7 +21,8 @@ namespace Anemonis.AspNetCore.RequestDecompression
             EncodingName = encodingName;
         }
 
-        internal string EncodingName
+        /// <summary>Gets the encoding name used in the "Content-Encoding" header.</summary>
+        public string EncodingName
         {
             get;
         }
