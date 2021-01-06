@@ -56,7 +56,7 @@
     <PackageIcon>$(PackageIconFileName)</PackageIcon>
   </PropertyGroup>
   <ItemGroup Condition="'$(IsPackageProject)' == 'true' and Exists('$(PackageIconFilePath)')">
-    <None Update="$(PackageIconFilePath)">
+    <None Include="$(PackageIconFilePath)">
       <Pack>true</Pack>
       <PackagePath>$(PackageIconFileName)</PackagePath>
     </None>
