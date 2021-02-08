@@ -1,7 +1,6 @@
 ﻿// © Alexander Kozlenko. Licensed under the MIT License.
 
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 
@@ -17,25 +16,12 @@ namespace Anemonis.AspNetCore.RequestDecompression
         {
         }
 
-        internal RequestDecompressionProviderCollection(IList<Type> list)
-            : base(list)
-        {
-        }
-
-        private static void ValidateProviderType(Type value)
-        {
-            if (!typeof(IDecompressionProvider).IsAssignableFrom(value))
-            {
-                throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Strings.GetString("provider_collection.invalid_type"), typeof(IDecompressionProvider)), nameof(value));
-            }
-        }
-
         /// <summary>Adds an object to the end of the <see cref="Collection{T}" />.</summary>
         /// <typeparam name="T">The type of the decompression provider.</typeparam>
         public void Add<T>()
             where T : IDecompressionProvider
         {
-            Add(typeof(T));
+            base.Add(typeof(T));
         }
 
         /// <inheritdoc />
@@ -46,8 +32,10 @@ namespace Anemonis.AspNetCore.RequestDecompression
             {
                 throw new ArgumentNullException(nameof(item));
             }
-
-            ValidateProviderType(item);
+            if (!typeof(IDecompressionProvider).IsAssignableFrom(item))
+            {
+                throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Strings.GetString("provider_collection.invalid_type"), typeof(IDecompressionProvider)), nameof(item));
+            }
 
             if (!Contains(item))
             {
@@ -63,8 +51,10 @@ namespace Anemonis.AspNetCore.RequestDecompression
             {
                 throw new ArgumentNullException(nameof(item));
             }
-
-            ValidateProviderType(item);
+            if (!typeof(IDecompressionProvider).IsAssignableFrom(item))
+            {
+                throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Strings.GetString("provider_collection.invalid_type"), typeof(IDecompressionProvider)), nameof(item));
+            }
 
             if (!Contains(item))
             {

@@ -19,7 +19,7 @@ namespace Anemonis.AspNetCore.RequestDecompression
     /// <summary>Represents a middleware for adding HTTP request decompression to the application's request pipeline.</summary>
     public sealed class RequestDecompressionMiddleware : IMiddleware, IDisposable
     {
-        private readonly IReadOnlyDictionary<string, IDecompressionProvider> _providers;
+        private readonly Dictionary<string, IDecompressionProvider> _providers;
         private readonly bool _skipUnsupportedEncodings;
         private readonly ILogger _logger;
 
@@ -40,11 +40,6 @@ namespace Anemonis.AspNetCore.RequestDecompression
         {
             var request = context.Request;
             var requestHeaders = request.Headers;
-
-            if (!requestHeaders.ContainsKey(HeaderNames.ContentEncoding))
-            {
-                return next.Invoke(context);
-            }
 
             if (requestHeaders.ContainsKey(HeaderNames.ContentRange))
             {
@@ -123,13 +118,13 @@ namespace Anemonis.AspNetCore.RequestDecompression
         /// <inheritdoc />
         public void Dispose()
         {
-            foreach (var provider in _providers.Values)
+            foreach (var kvp in _providers)
             {
-                (provider as IDisposable)?.Dispose();
+                (kvp.Value as IDisposable)?.Dispose();
             }
         }
 
-        private static IReadOnlyDictionary<string, IDecompressionProvider> CreateProviders(IServiceProvider services, IReadOnlyCollection<Type> providerTypes)
+        private static Dictionary<string, IDecompressionProvider> CreateProviders(IServiceProvider services, IReadOnlyCollection<Type> providerTypes)
         {
             var providers = new Dictionary<string, IDecompressionProvider>(providerTypes.Count, StringComparer.OrdinalIgnoreCase);
 

@@ -40,6 +40,39 @@ namespace Anemonis.AspNetCore.RequestDecompression.UnitTests
         }
 
         [TestMethod]
+        public async Task InvokeAsyncWhenRequestHasNoContentEncodingHeader()
+        {
+            var options = new RequestDecompressionOptions();
+
+            options.Providers.Add<TestDecompressionProvider10>();
+
+            var serviceProviderMock = new Mock<IServiceProvider>(MockBehavior.Strict);
+            var optionsMock = new Mock<IOptions<RequestDecompressionOptions>>(MockBehavior.Strict);
+
+            optionsMock
+                .Setup(o => o.Value)
+                .Returns(options);
+
+            var loggerMock = new Mock<ILogger<RequestDecompressionMiddleware>>(MockBehavior.Loose);
+
+            loggerMock
+                .Setup(o => o.IsEnabled(It.IsAny<LogLevel>()))
+                .Returns(true);
+
+            var middleware = new RequestDecompressionMiddleware(serviceProviderMock.Object, optionsMock.Object, loggerMock.Object);
+            var content = "Hello World!";
+            var contentBytes = Encoding.UTF8.GetBytes(content);
+            var httpContext = new DefaultHttpContext();
+
+            httpContext.Request.Method = HttpMethods.Post;
+            httpContext.Request.Body = new MemoryStream(contentBytes);
+
+            await middleware.InvokeAsync(httpContext, c => Task.CompletedTask);
+
+            Assert.AreEqual(0, httpContext.Response.Body.Length);
+        }
+
+        [TestMethod]
         public async Task InvokeAsyncWhenRequestHasContentRangeHeader()
         {
             var options = new RequestDecompressionOptions();
