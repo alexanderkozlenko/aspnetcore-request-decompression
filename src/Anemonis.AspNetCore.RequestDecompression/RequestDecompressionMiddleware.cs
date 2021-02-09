@@ -41,19 +41,19 @@ namespace Anemonis.AspNetCore.RequestDecompression
             var request = context.Request;
             var requestHeaders = request.Headers;
 
-            if (requestHeaders.ContainsKey(HeaderNames.ContentRange))
-            {
-                _logger.LogRequestDecodingDisabled();
-
-                return next.Invoke(context);
-            }
-
             // There could be a single StringValues entry with comma delimited contents
 
             var encodingNames = requestHeaders.GetCommaSeparatedValues(HeaderNames.ContentEncoding);
 
             if (encodingNames.Length == 0)
             {
+                return next.Invoke(context);
+            }
+
+            if (requestHeaders.ContainsKey(HeaderNames.ContentRange))
+            {
+                _logger.LogRequestDecodingDisabled();
+
                 return next.Invoke(context);
             }
 
