@@ -36,6 +36,11 @@ stages:
   - job: Release
     steps:
     - task: UseDotNet@2
+      displayName: 'dotnet.use.sonar'
+      inputs:
+        packageType: runtime
+        version: 2.x
+    - task: UseDotNet@2
       displayName: 'dotnet.use.sdk'
       inputs:
         useGlobalJson: true
